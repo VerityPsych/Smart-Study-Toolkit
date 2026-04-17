@@ -1,0 +1,2199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LearnStyle Toolkit</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fraunces:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/heic2any/dist/heic2any.min.js"></script>
+<style>
+  :root{
+    --green:#2ECC8A;--green-dark:#1A9E68;--blue:#4A90D9;--amber:#F5A623;
+    --purple:#7B6CF6;--teal:#38BEC9;--coral:#FF7C5C;
+    --bg:#0A0A0A;--surface:#141414;--surface2:#1C1C1C;
+    --border:rgba(255,255,255,0.08);--text:#F0EDE8;--muted:rgba(240,237,232,0.55);
+    --radius:16px;--radius-sm:10px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+  nav{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 2rem;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(10,10,10,0.92);backdrop-filter:blur(12px);z-index:100}
+  .nav-logo{font-family:'Fraunces',serif;font-size:1.35rem;color:var(--text);letter-spacing:-0.02em}
+  .nav-logo span{color:var(--green);font-style:italic}
+  .nav-links{display:flex;gap:0.5rem}
+  .nav-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:0.5rem 1.1rem;border-radius:8px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:0.9rem;transition:all 0.2s}
+  .nav-btn:hover,.nav-btn.active{border-color:var(--green);color:var(--green);background:rgba(46,204,138,0.08)}
+  .page{display:none}.page.active{display:block}
+  /* HOME */
+  .hero{text-align:center;padding:4rem 2rem 2.5rem;max-width:700px;margin:0 auto}
+  .hero-tag{display:inline-block;background:rgba(46,204,138,0.12);color:var(--green);border:1px solid rgba(46,204,138,0.3);padding:0.35rem 1rem;border-radius:100px;font-size:0.8rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1.5rem}
+  .hero h1{font-family:'Fraunces',serif;font-size:clamp(2.2rem,5vw,3.6rem);line-height:1.1;font-weight:600;letter-spacing:-0.03em;margin-bottom:1.2rem}
+  .hero h1 em{color:var(--green);font-style:italic}
+  .hero p{color:var(--muted);font-size:1.05rem;line-height:1.7;margin-bottom:2rem}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;max-width:640px;margin:0 auto 2.5rem;padding:0 1rem}
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem 1rem;text-align:center}
+  .stat-card .num{font-family:'Fraunces',serif;font-size:2.2rem;font-weight:600;color:var(--green);display:block}
+  .stat-card .label{font-size:0.78rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-top:0.25rem}
+  .setup-section{max-width:640px;margin:0 auto 2rem;padding:0 1rem}
+  .section-label{font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:0.75rem}
+  .role-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-bottom:1.5rem}
+  .role-card{background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);padding:1.25rem 1rem;cursor:pointer;transition:all 0.2s;text-align:left}
+  .role-card:hover{border-color:rgba(46,204,138,0.4);background:rgba(46,204,138,0.04)}
+  .role-card.selected{border-color:var(--green);background:rgba(46,204,138,0.08)}
+  .role-icon{font-size:1.8rem;margin-bottom:0.6rem;display:block}
+  .role-title{font-weight:700;font-size:0.95rem;margin-bottom:0.2rem}
+  .role-sub{font-size:0.78rem;color:var(--muted)}
+  .input-row{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem}
+  .form-input{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0.9rem 1.1rem;font-family:'Nunito',sans-serif;font-size:1rem;color:var(--text);transition:border-color 0.2s}
+  .form-input:focus{outline:none;border-color:var(--green)}
+  .form-input::placeholder{color:var(--muted)}
+  .form-input.full{width:100%;margin-bottom:0.75rem}
+  .ethics-box{background:rgba(74,144,217,0.08);border:1px solid rgba(74,144,217,0.25);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:2rem;font-size:0.875rem;line-height:1.6;color:rgba(240,237,232,0.75)}
+  .ethics-box strong{color:var(--blue)}
+  .btn-primary{display:block;width:100%;max-width:300px;margin:0 auto;background:var(--green);color:#0A0A0A;border:none;border-radius:100px;padding:1rem 2rem;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:all 0.2s;text-align:center}
+  .btn-primary:hover{background:var(--green-dark);transform:translateY(-1px)}
+  .btn-primary:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+  footer-note{display:block;text-align:center;color:var(--muted);font-size:0.78rem;padding:2rem 1rem;line-height:1.6}
+  /* ASSESSMENT */
+  .assessment-wrap{max-width:680px;margin:0 auto;padding:2rem 1rem}
+  .progress-bar-wrap{background:var(--surface);border-radius:100px;height:6px;margin-bottom:0.6rem;overflow:hidden}
+  .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--teal));border-radius:100px;transition:width 0.4s ease}
+  .progress-meta{display:flex;justify-content:space-between;font-size:0.8rem;color:var(--muted);margin-bottom:2.5rem}
+  .q-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2rem;margin-bottom:1.5rem;animation:slideIn 0.3s ease}
+  @keyframes slideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .q-num{font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--green);margin-bottom:0.75rem}
+  .q-text{font-size:1.15rem;font-weight:600;line-height:1.5;margin-bottom:0.65rem}
+  .select-hint{display:inline-block;background:rgba(245,166,35,0.12);color:#F5B93A;border:1px solid rgba(245,166,35,0.28);border-radius:100px;font-size:0.75rem;font-weight:700;padding:0.25rem 0.8rem;margin-bottom:1.25rem}
+  .options-grid{display:grid;gap:0.7rem}
+  .option-btn{background:var(--surface2);border:2px solid transparent;border-radius:var(--radius-sm);padding:1rem 1.25rem;cursor:pointer;font-family:'Nunito',sans-serif;font-size:0.95rem;color:var(--text);text-align:left;display:flex;align-items:center;gap:0.9rem;transition:all 0.18s;line-height:1.45;width:100%}
+  .option-btn:hover{border-color:rgba(46,204,138,0.45);background:rgba(46,204,138,0.06)}
+  .option-btn.selected{border-color:var(--green);background:rgba(46,204,138,0.1)}
+  .option-btn.selected .opt-letter{background:var(--green);color:#0A0A0A;border-color:var(--green)}
+  .opt-letter{width:28px;height:28px;border-radius:50%;background:var(--surface);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800;flex-shrink:0;transition:all 0.18s;color:var(--muted)}
+  .nav-btns{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-top:1rem}
+  .btn-secondary{background:var(--surface);border:1.5px solid var(--border);color:var(--muted);padding:0.7rem 1.4rem;border-radius:100px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:0.9rem;font-weight:700;transition:all 0.2s}
+  .btn-secondary:hover{border-color:var(--green);color:var(--green)}
+  .btn-next{background:var(--green);color:#0A0A0A;border:none;padding:0.75rem 2rem;border-radius:100px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:0.95rem;font-weight:800;transition:all 0.2s;min-width:140px}
+  .btn-next:hover{background:var(--green-dark)}.btn-next:disabled{opacity:0.35;cursor:not-allowed}
+  /* RESULTS (learner basic) */
+  .results-wrap{max-width:720px;margin:0 auto;padding:2rem 1rem 4rem}
+  .result-hero{text-align:center;margin-bottom:2.5rem}
+  .vark-badges{display:flex;justify-content:center;gap:0.6rem;flex-wrap:wrap;margin:1.5rem 0}
+  .vark-badge{padding:0.5rem 1.2rem;border-radius:100px;font-weight:800;font-size:0.9rem;letter-spacing:0.04em}
+  .score-bars{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem;margin-bottom:1.5rem}
+  .score-row{display:flex;align-items:center;gap:1rem;margin-bottom:1.1rem}
+  .score-row:last-child{margin-bottom:0}
+  .score-label{width:135px;font-weight:700;font-size:0.82rem;flex-shrink:0}
+  .score-track{flex:1;height:10px;background:var(--surface2);border-radius:100px;overflow:hidden;position:relative}
+  .score-fill{height:100%;border-radius:100px;transition:width 1.2s ease}
+  .score-pct{font-size:0.82rem;color:var(--muted);width:40px;text-align:right;font-weight:700}
+  /* PAYMENT PAGE */
+  .payment-wrap{max-width:640px;margin:0 auto;padding:3rem 1rem 4rem}
+  .payment-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2rem;margin-bottom:1.5rem}
+  .price-badge{display:inline-flex;align-items:baseline;gap:0.25rem;background:rgba(46,204,138,0.12);border:1px solid rgba(46,204,138,0.3);border-radius:12px;padding:0.75rem 1.5rem;margin:1rem auto 1.5rem;display:block;width:fit-content}
+  .price-amount{font-family:'Fraunces',serif;font-size:2.5rem;color:var(--green);font-weight:600}
+  .price-currency{font-size:1.1rem;color:var(--green);font-weight:700}
+  .bank-details{background:var(--surface2);border-radius:var(--radius-sm);padding:1.25rem;margin:1rem 0}
+  .bank-row{display:flex;justify-content:space-between;padding:0.45rem 0;border-bottom:1px solid var(--border);font-size:0.9rem}
+  .bank-row:last-child{border-bottom:none}
+  .bank-key{color:var(--muted);font-weight:600}
+  .bank-val{font-weight:700;color:var(--text)}
+  .ref-box{background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:var(--radius-sm);padding:1rem;text-align:center;margin:1rem 0}
+  .ref-code{font-family:'Fraunces',serif;font-size:1.5rem;color:var(--amber);letter-spacing:0.1em;font-weight:600}
+  .upload-area{border:2px dashed var(--border);border-radius:var(--radius);padding:2rem;text-align:center;cursor:pointer;transition:all 0.2s;margin:1rem 0}
+  .upload-area:hover{border-color:rgba(46,204,138,0.4);background:rgba(46,204,138,0.03)}
+  .btn-amber{display:block;width:100%;max-width:320px;margin:0 auto;background:var(--amber);color:#0A0A0A;border:none;border-radius:100px;padding:1rem 2rem;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:all 0.2s;text-align:center}
+  .btn-amber:hover{background:#D4851A;transform:translateY(-1px)}
+  .btn-amber:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+  /* PORTAL */
+  .portal-wrap{max-width:960px;margin:0 auto;padding:2rem 1rem 4rem}
+  .portal-login{max-width:400px;margin:4rem auto;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2.5rem;text-align:center}
+  .portal-login h2{font-family:'Fraunces',serif;font-size:1.6rem;margin-bottom:0.5rem}
+  .portal-login p{color:var(--muted);font-size:0.9rem;margin-bottom:2rem}
+  .portal-login input{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0.9rem 1.1rem;font-family:'Nunito',sans-serif;font-size:1rem;color:var(--text);margin-bottom:1rem;transition:border-color 0.2s}
+  .portal-login input:focus{outline:none;border-color:var(--green)}
+  .portal-login input::placeholder{color:var(--muted)}
+  .portal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem}
+  .portal-header h2{font-family:'Fraunces',serif;font-size:1.6rem}
+  .portal-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
+  .p-stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;text-align:center}
+  .p-stat .num{font-size:1.8rem;font-family:'Fraunces',serif;color:var(--green);display:block}
+  .p-stat .lbl{font-size:0.75rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.07em}
+  .assessment-list{display:grid;gap:0.75rem}
+  .assessment-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;cursor:pointer;transition:border-color 0.2s}
+  .assessment-row:hover{border-color:rgba(46,204,138,0.35)}
+  .row-name{font-weight:700;font-size:0.95rem}
+  .row-meta{font-size:0.78rem;color:var(--muted);margin-top:0.2rem}
+  .row-badges{display:flex;gap:0.4rem;flex-wrap:wrap}
+  .mini-badge{padding:0.25rem 0.65rem;border-radius:100px;font-size:0.72rem;font-weight:800;letter-spacing:0.04em}
+  .row-actions{display:flex;gap:0.5rem}
+  .icon-btn{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.45rem 0.85rem;color:var(--muted);cursor:pointer;font-size:0.78rem;font-family:'Nunito',sans-serif;font-weight:700;transition:all 0.2s}
+  .icon-btn:hover{border-color:var(--green);color:var(--green)}
+  .icon-btn.delete:hover{border-color:var(--coral);color:var(--coral)}
+  .icon-btn.approve{background:rgba(46,204,138,0.1);border-color:rgba(46,204,138,0.4);color:var(--green)}
+  .icon-btn.approve:hover{background:rgba(46,204,138,0.2)}
+  .empty-state{text-align:center;padding:4rem 2rem;color:var(--muted)}
+  .empty-state h3{font-size:1.1rem;margin-bottom:0.5rem;color:var(--text)}
+  .payment-pending-badge{background:rgba(245,166,35,0.15);color:#F5B93A;border:1px solid rgba(245,166,35,0.3);border-radius:100px;font-size:0.7rem;font-weight:700;padding:0.2rem 0.6rem}
+  .payment-paid-badge{background:rgba(46,204,138,0.15);color:var(--green);border:1px solid rgba(46,204,138,0.3);border-radius:100px;font-size:0.7rem;font-weight:700;padding:0.2rem 0.6rem}
+  /* MODAL */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:200;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto}
+  .modal-overlay.open{display:flex}
+  .modal{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2rem;width:100%;max-width:640px;position:relative;margin:auto}
+  .modal-close{position:absolute;top:1rem;right:1rem;background:var(--surface2);border:1px solid var(--border);border-radius:50%;width:32px;height:32px;cursor:pointer;color:var(--muted);font-size:1.1rem;display:flex;align-items:center;justify-content:center}
+  /* COLOURS */
+  .color-V{background:rgba(74,144,217,0.15);color:#6AABF0;border-color:rgba(74,144,217,0.3)}
+  .color-A{background:rgba(46,204,138,0.15);color:#2ECC8A;border-color:rgba(46,204,138,0.3)}
+  .color-R{background:rgba(123,108,246,0.15);color:#A89FF8;border-color:rgba(123,108,246,0.3)}
+  .color-K{background:rgba(245,166,35,0.15);color:#F5B93A;border-color:rgba(245,166,35,0.3)}
+  .color-V-fill{background:rgba(74,144,217,0.1)!important;border-color:rgba(74,144,217,0.22)!important}
+  .color-A-fill{background:rgba(46,204,138,0.08)!important;border-color:rgba(46,204,138,0.22)!important}
+  .color-R-fill{background:rgba(123,108,246,0.08)!important;border-color:rgba(123,108,246,0.22)!important}
+  .color-K-fill{background:rgba(245,166,35,0.08)!important;border-color:rgba(245,166,35,0.22)!important}
+  .color-multi-fill{background:rgba(56,190,201,0.07)!important;border-color:rgba(56,190,201,0.22)!important}
+  .color-V-bar{background:#4A90D9!important}.color-A-bar{background:#2ECC8A!important}
+  .color-R-bar{background:#7B6CF6!important}.color-K-bar{background:#F5A623!important}
+  .color-V-text{color:#6AABF0!important}.color-A-text{color:#2ECC8A!important}
+  .color-R-text{color:#A89FF8!important}.color-K-text{color:#F5B93A!important}
+  .color-multi-text{color:#38BEC9!important}
+  @media(max-width:600px){
+    .stats{grid-template-columns:1fr 1fr}.role-grid{grid-template-columns:1fr}
+    .portal-stats{grid-template-columns:1fr 1fr}.assessment-row{flex-direction:column;align-items:flex-start}
+    .input-row{grid-template-columns:1fr}nav{padding:1rem}.nav-logo{font-size:1.1rem}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">learn<span>style</span> toolkit</div>
+  <div class="nav-links">
+    <button class="nav-btn active" id="nav-home" onclick="showPage('home',this)">Assessment</button>
+    <button class="nav-btn" id="nav-portal" onclick="showPage('portal',this)">Practitioner dashboard</button>
+  </div>
+</nav>
+
+<!-- HOME -->
+<div id="page-home" class="page active">
+  <div id="already-done-msg" style="display:none;max-width:500px;margin:4rem auto;text-align:center;padding:0 1rem">
+    <div style="font-size:3rem;margin-bottom:1rem">✅</div>
+    <h2 style="font-family:'Fraunces',serif;font-size:1.8rem;margin-bottom:0.75rem">Previous assessment found on this browser</h2>
+    <p style="color:var(--muted);line-height:1.7;margin-bottom:1.5rem">A learner has already completed the assessment in this browser profile. You can still access the saved report or payment step below.</p>
+    <p style="color:var(--muted);font-size:0.875rem">If you believe this is an error, please contact your practitioner.</p>
+  </div>
+  <div id="home-content">
+    <div class="hero">
+      <span class="hero-tag">VARK Framework</span>
+      <h1>Discover your <em>learning style</em><br>and unlock your potential</h1>
+      <p>A psychometrically grounded assessment based on the VARK framework.<br>Complete the questionnaire to receive a personalised study toolkit.</p>
+    </div>
+    <div class="stats">
+      <div class="stat-card"><span class="num">16</span><span class="label">scenario questions</span></div>
+      <div class="stat-card"><span class="num">~8</span><span class="label">minutes to complete</span></div>
+      <div class="stat-card"><span class="num">11</span><span class="label">profile combinations</span></div>
+    </div>
+    <div class="setup-section">
+      <div class="section-label">Who is completing this?</div>
+      <div class="role-grid">
+        <div class="role-card" onclick="selectRole('Learner',this)"><span class="role-icon">🎒</span><div class="role-title">Learner</div><div class="role-sub">Student aged 10–18</div></div>
+        <div class="role-card" onclick="selectRole('Parent / Guardian',this)"><span class="role-icon">👨‍👧</span><div class="role-title">Parent / Guardian</div><div class="role-sub">Completing for your child</div></div>
+        <div class="role-card" onclick="selectRole('Practitioner',this)"><span class="role-icon">📋</span><div class="role-title">Practitioner</div><div class="role-sub">Administering for a client</div></div>
+      </div>
+      <div class="section-label">Learner details</div>
+      <div class="input-row">
+        <input type="text" class="form-input" id="learner-first" placeholder="First name  e.g. Aisha" maxlength="40">
+        <input type="text" class="form-input" id="learner-last" placeholder="Surname  e.g. Patel" maxlength="40">
+      </div>
+      <input type="text" class="form-input full" id="learner-school" placeholder="School name  e.g. Greenfield Academy" maxlength="80">
+      <div class="ethics-box"><strong>Scope &amp; ethical notice —</strong> This tool is designed for educational guidance only and falls within the scope of psychometrist independent practice. It does not constitute a clinical diagnosis. Results reflect learning preferences, not ability. No personally identifiable data is stored externally.</div>
+      <button class="btn-primary" id="start-btn" onclick="startAssessment()" disabled>Begin assessment →</button>
+    </div>
+    <footer-note>Based on the VARK Learning Styles Model (Fleming &amp; Mills, 1992). Adapted for educational toolkit use. For use within psychometrist independent practice scope.</footer-note>
+  </div>
+</div>
+
+<!-- ASSESSMENT -->
+<div id="page-assessment" class="page">
+  <div class="assessment-wrap">
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="progress-meta"><span id="progress-text">Question 1 of 16</span><span id="progress-name"></span></div>
+    <div id="question-container"></div>
+    <div class="nav-btns">
+      <button class="btn-secondary" id="prev-btn" onclick="prevQuestion()">← Back</button>
+      <button class="btn-next" id="next-btn" onclick="nextQuestion()" disabled>Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS (basic - what learner sees after completing) -->
+<div id="page-results" class="page">
+  <div class="results-wrap" id="results-container"></div>
+</div>
+
+<!-- PAYMENT PAGE -->
+<div id="page-payment" class="page">
+  <div class="payment-wrap" id="payment-container"></div>
+</div>
+
+<!-- PAID REPORT (released after practitioner approves) -->
+<div id="page-paid-report" class="page">
+  <div class="results-wrap" id="paid-report-container"></div>
+</div>
+
+<!-- PORTAL -->
+<div id="page-portal" class="page">
+  <div class="portal-wrap">
+    <div id="portal-login-view">
+      <div class="portal-login">
+        <h2>Practitioner Access</h2>
+        <p>This dashboard syncs through Supabase so you can log in from any device.</p>
+        <input type="email" id="portal-email" placeholder="Practitioner email" value="veritypsych@outlook.com" onkeydown="if(event.key==='Enter')portalLogin()">
+        <input type="password" id="portal-password" placeholder="Enter your password" onkeydown="if(event.key==='Enter')portalLogin()">
+        <div id="login-error" style="color:#FF7C5C;font-size:0.85rem;margin-bottom:0.8rem;display:none;">Unable to sign in. Check your Supabase settings, email, or password.</div>
+        <button class="btn-primary" onclick="portalLogin()">Access dashboard</button>
+      </div>
+    </div>
+    <div id="portal-dashboard" style="display:none;">
+      <div class="portal-header">
+        <div>
+          <h2>Practitioner Dashboard</h2>
+          <p style="color:var(--muted);font-size:0.875rem;margin-top:0.3rem;">All assessment results synced across devices through Supabase</p>
+        </div>
+        <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+          <button class="btn-secondary" onclick="refreshPortalData()">Refresh data</button>
+          <button class="btn-secondary" onclick="portalLogout()">Sign out</button>
+        </div>
+      </div>
+      <div class="portal-stats" id="portal-stats"></div>
+      <div class="assessment-list" id="portal-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL (practitioner full view) -->
+<div class="modal-overlay" id="detail-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modal-content"></div>
+    <div style="display:flex;gap:0.75rem;margin-top:1.5rem;flex-wrap:wrap;">
+      <button class="btn-primary" style="max-width:none;flex:1;min-width:140px;" id="pdf-btn" onclick="generatePDF()">⬇ Download PDF Report</button>
+      <button class="btn-secondary" style="flex:1;min-width:140px;" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// CONFIG — update these with your real details
+// ═══════════════════════════════════════════════════════
+const CONFIG = {
+  REPORT_PRICE: 'R100',
+  REPORT_PRICE_NUM: 100,
+  CURRENCY: 'ZAR',
+  // Your bank details for EFT
+  BANK_NAME: 'First National Bank (FNB)',
+  ACCOUNT_NAME: 'Verity Psych Consultancy',
+  ACCOUNT_NUMBER: '63204694392',
+  ACCOUNT_TYPE: 'Cheque Account',
+  BRANCH_CODE: '250655',                 // FNB universal branch code
+  BANK_REF_PREFIX: 'LST',
+  PRACTITIONER_EMAIL: 'veritypsych@outlook.com', // ← replace with your email
+};
+
+const SUPABASE_CONFIG = {
+  URL: 'https://kyxsoeeizgjbrquqimfw.supabase.co',
+  ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5eHNvZWVpemdqYnJxdXFpbWZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwOTg3MTcsImV4cCI6MjA5MTY3NDcxN30.2gzM1AQ9v3NmFOosNPU-jPnVjtp7uw1cuUa1DGgS_3g',
+  ASSESSMENTS_TABLE: 'learnstyle_assessments',
+  STORAGE_BUCKET: 'proof-of-payment'
+};
+
+
+const EDGE_FUNCTIONS = {
+  SUBMIT_ASSESSMENT: 'https://kyxsoeeizgjbrquqimfw.supabase.co/functions/v1/submit-assessment',
+  SIGN_PROOF_UPLOAD: 'https://kyxsoeeizgjbrquqimfw.supabase.co/functions/v1/sign-proof-upload',
+  CONFIRM_PROOF_UPLOAD: 'https://kyxsoeeizgjbrquqimfw.supabase.co/functions/v1/confirm-proof-upload'
+};
+
+// ═══════════════════════════════════════════════════════
+// QUESTIONS
+// ═══════════════════════════════════════════════════════
+const questions = [
+  {id:1,text:"Your teacher explains something new. Which way helps you understand it best?",opts:[{l:'A',v:'V',t:"Seeing a diagram, chart, or drawing that shows how it works"},{l:'B',v:'A',t:"Listening to the teacher explain it out loud"},{l:'C',v:'R',t:"Reading about it in a book or on a worksheet"},{l:'D',v:'K',t:"Trying it out yourself with a hands-on activity"}]},
+  {id:2,text:"You're trying to learn how to spell a tricky new word. What do you do?",opts:[{l:'A',v:'V',t:"Picture how the word looks in your head"},{l:'B',v:'A',t:"Say it out loud over and over again"},{l:'C',v:'R',t:"Write it down many times to practise"},{l:'D',v:'K',t:"Use it in a sentence or real-life activity"}]},
+  {id:3,text:"You want to build a cool paper model. How do you figure out how to do it?",opts:[{l:'A',v:'V',t:"Look at pictures of the finished model"},{l:'B',v:'A',t:"Watch a video of someone explaining the steps"},{l:'C',v:'R',t:"Read the instructions carefully step by step"},{l:'D',v:'K',t:"Just dive in and start folding to figure it out"}]},
+  {id:4,text:"After a lesson, how do you best remember what you learned?",opts:[{l:'A',v:'V',t:"Drawing a mind map or picture notes"},{l:'B',v:'A',t:"Talking about it with a friend or family member"},{l:'C',v:'R',t:"Writing notes or reading through your textbook again"},{l:'D',v:'K',t:"Doing more practice questions or experiments"}]},
+  {id:5,text:"You need to find your way around a new building. What helps most?",opts:[{l:'A',v:'V',t:"Looking at a map or floor plan"},{l:'B',v:'A',t:"Someone telling you the directions out loud"},{l:'C',v:'R',t:"Reading a written list of directions"},{l:'D',v:'K',t:"Walking around and exploring to find your way"}]},
+  {id:6,text:"You want to tell your friend about a great book you read. What do you do first?",opts:[{l:'A',v:'V',t:"Show them the cover and pictures from the book"},{l:'B',v:'A',t:"Talk to them and tell them the story out loud"},{l:'C',v:'R',t:"Read out your favourite part to them"},{l:'D',v:'K',t:"Act out a scene or show them what happens"}]},
+  {id:7,text:"Science class is coming up and you want to prepare. What sounds most fun?",opts:[{l:'A',v:'V',t:"Looking at diagrams of atoms, cells, or planets"},{l:'B',v:'A',t:"Listening to a podcast or audio explanation about the topic"},{l:'C',v:'R',t:"Reading about it in a book or science magazine"},{l:'D',v:'K',t:"Doing a hands-on experiment in class or at home"}]},
+  {id:8,text:"You're studying for an important test next week. What works best for you?",opts:[{l:'A',v:'V',t:"Making colourful charts and diagrams to revise from"},{l:'B',v:'A',t:"Recording yourself and listening back to your notes"},{l:'C',v:'R',t:"Reading your notes again and writing summaries"},{l:'D',v:'K',t:"Doing past papers and practise questions again and again"}]},
+  {id:9,text:"A friend explains a maths problem to you. You still don't get it. What would actually help?",opts:[{l:'A',v:'V',t:"Drawing a picture or diagram to show the problem"},{l:'B',v:'A',t:"Having someone talk through it step by step with you"},{l:'C',v:'R',t:"Writing out the steps and reading them slowly"},{l:'D',v:'K',t:"Using objects like counters or blocks to try it yourself"}]},
+  {id:10,text:"You're learning the words to a new song. What helps you remember them?",opts:[{l:'A',v:'V',t:"Reading the lyrics off a screen"},{l:'B',v:'A',t:"Listening to the song loads of times"},{l:'C',v:'R',t:"Writing the lyrics out by hand"},{l:'D',v:'K',t:"Dancing or moving along to the music"}]},
+  {id:11,text:"You have a project about how the human body works. What would you enjoy most?",opts:[{l:'A',v:'V',t:"Making a poster with diagrams of body parts"},{l:'B',v:'A',t:"Recording a voice presentation explaining everything"},{l:'C',v:'R',t:"Writing a detailed report using books and websites"},{l:'D',v:'K',t:"Building a 3D model of the body"}]},
+  {id:12,text:"You want to understand a really confusing rule in a game. What do you prefer?",opts:[{l:'A',v:'V',t:"Looking at a diagram showing how the rule works"},{l:'B',v:'A',t:"Having someone explain it to you in words"},{l:'C',v:'R',t:"Reading the rulebook carefully"},{l:'D',v:'K',t:"Playing the game and learning as you go"}]},
+  {id:13,text:"Your class is learning about a historical event. What would help you understand it best?",opts:[{l:'A',v:'V',t:"A timeline with pictures and a map showing what happened"},{l:'B',v:'A',t:"A story told out loud about the event"},{l:'C',v:'R',t:"Reading a chapter in a history book"},{l:'D',v:'K',t:"Acting it out or doing a role-play activity"}]},
+  {id:14,text:"You need to remember 10 important facts for a test. Which trick helps most?",opts:[{l:'A',v:'V',t:"Making a colourful visual list with icons"},{l:'B',v:'A',t:"Saying the facts out loud or turning them into a rap"},{l:'C',v:'R',t:"Writing them out multiple times"},{l:'D',v:'K',t:"Moving around or using actions to match each fact"}]},
+  {id:15,text:"You're visiting a museum. What do you enjoy most?",opts:[{l:'A',v:'V',t:"Looking at photos, videos, and displays"},{l:'B',v:'A',t:"Listening to the audio tour or a guide explaining things"},{l:'C',v:'R',t:"Reading the information boards and labels"},{l:'D',v:'K',t:"Touching and trying out the interactive exhibits"}]},
+  {id:16,text:"You want to try a new recipe. How do you like to learn it?",opts:[{l:'A',v:'V',t:"Watching a cooking video with pictures of each step"},{l:'B',v:'A',t:"Having someone tell you what to do as you cook"},{l:'C',v:'R',t:"Reading the recipe carefully before starting"},{l:'D',v:'K',t:"Just starting to cook and figuring it out as you go"}]}
+];
+
+// ═══════════════════════════════════════════════════════
+// PROFILES
+// ═══════════════════════════════════════════════════════
+const profiles = {
+  V:{name:"Visual Learner",emoji:"👁️",color:[74,144,217],hex:"#4A90D9",
+     short:"You understand best when you can see it!",
+     desc:"You have a brilliant ability to understand information through pictures, diagrams, maps, and colours. When things are shown visually, they click faster than any other learning method.",
+     practDesc:"This learner demonstrates a strong preference for visuo-spatial processing. They encode information most effectively through graphical representations, spatial layouts, and colour-coded structures. Instruction should leverage visual organisers, concept maps, and diagrammatic explanations.",
+     tips:[{i:"🗺️",t:"Draw mind maps and diagrams when studying"},{i:"🎨",t:"Use coloured highlighters to organise notes"},{i:"📊",t:"Turn information into charts and timelines"},{i:"🖼️",t:"Create picture-based flashcards for revision"},{i:"📹",t:"Watch educational videos and diagrams online"},{i:"✏️",t:"Sketch scenes from stories or history events"}]},
+  A:{name:"Auditory Learner",emoji:"👂",color:[46,204,138],hex:"#2ECC8A",
+     short:"You learn best by hearing and talking!",
+     desc:"Listening and speaking are your superpowers! You absorb information really well when you hear it explained out loud, discuss it with others, or teach it back to someone else.",
+     practDesc:"This learner shows a marked preference for phonological and verbal processing channels. Information retention is strongest when content is delivered through auditory modalities — spoken instruction, discussion, verbal rehearsal, and mnemonic devices involving rhythm or rhyme.",
+     tips:[{i:"🎙️",t:"Record notes and listen back while studying"},{i:"💬",t:"Explain things out loud to yourself or a friend"},{i:"🎵",t:"Turn facts into songs, rhymes or raps"},{i:"🎧",t:"Listen to educational podcasts and talks"},{i:"📢",t:"Join study groups where you discuss ideas"},{i:"👩‍🏫",t:"Ask your teacher to explain things verbally"}]},
+  R:{name:"Reading & Writing Learner",emoji:"📖",color:[123,108,246],hex:"#7B6CF6",
+     short:"You shine when you read and write!",
+     desc:"Words on the page are where you come alive! You absorb information brilliantly when you can read carefully and write things down in your own words.",
+     practDesc:"This learner exhibits a preference for text-based information processing. They are most effective when engaging with written material — reading comprehension tasks, note-taking, structured lists, and essay-based output.",
+     tips:[{i:"✍️",t:"Rewrite notes in your own words after each lesson"},{i:"📋",t:"Make detailed lists and outlines when revising"},{i:"📚",t:"Read around the subject with books and articles"},{i:"📝",t:"Write essays and summaries to consolidate learning"},{i:"🗂️",t:"Organise notes into structured written formats"},{i:"📖",t:"Keep a learning journal to track new knowledge"}]},
+  K:{name:"Kinaesthetic Learner",emoji:"🙌",color:[245,166,35],hex:"#F5A623",
+     short:"You learn best by doing and moving!",
+     desc:"You are a hands-on superstar! You understand things best when you can physically do them, build them, or connect them to real-life experiences.",
+     practDesc:"This learner processes information optimally through embodied, experiential learning. Abstract concepts require concrete, real-world anchoring. They benefit significantly from practical application, physical manipulation of materials, movement-integrated study, and scenario-based problem solving.",
+     tips:[{i:"🔬",t:"Do experiments and practical activities when possible"},{i:"🚶",t:"Walk around while revising or studying"},{i:"🏗️",t:"Build models or create physical demonstrations"},{i:"🎭",t:"Act out scenes or use role-play to remember things"},{i:"✋",t:"Use flashcards you can physically sort and organise"},{i:"⏱️",t:"Take regular movement breaks while studying"}]}
+};
+
+const shortNames={V:"Visual",A:"Auditory",R:"Reading & Writing",K:"Kinaesthetic"};
+function buildProfileName(dom){
+  if(!dom||!dom.length) return "Visual Learner";
+  if(dom.length===1) return profiles[dom[0]].name;
+  if(dom.length===2) return shortNames[dom[0]]+" & "+shortNames[dom[1]]+" Learner";
+  return shortNames[dom[0]]+", "+shortNames[dom[1]]+" & "+shortNames[dom[2]]+" Learner";
+}
+
+// ═══════════════════════════════════════════════════════
+// 45-MIN STUDY TIMETABLE GENERATOR
+// ═══════════════════════════════════════════════════════
+function buildStudyTable(dom){
+  const slots = [
+    {time:"0:00 – 5:00",label:"Warm-up"},
+    {time:"5:00 – 20:00",label:"Active Learning Block 1"},
+    {time:"20:00 – 25:00",label:"Break & Move"},
+    {time:"25:00 – 38:00",label:"Active Learning Block 2"},
+    {time:"38:00 – 42:00",label:"Review & Recall"},
+    {time:"42:00 – 45:00",label:"Wrap-up"}
+  ];
+
+  const activities = {
+    V:{
+      "Warm-up":"Sketch a quick mind map of what you already know about the topic",
+      "Active Learning Block 1":"Draw diagrams, colour-code your notes, create a visual timeline",
+      "Break & Move":"Stand up, look away from your notes, close your eyes and picture the diagram",
+      "Active Learning Block 2":"Make picture flashcards or turn notes into a colourful chart",
+      "Review & Recall":"Redraw your mind map from memory without looking",
+      "Wrap-up":"Tick off what you drew and note what needs more colour or detail"
+    },
+    A:{
+      "Warm-up":"Say out loud what you already know about the topic — talk for 2 minutes",
+      "Active Learning Block 1":"Read your notes out loud, record yourself, or explain to a toy/pet",
+      "Break & Move":"Sing or rap the key facts to a simple beat while walking around",
+      "Active Learning Block 2":"Listen to your recording back, or discuss the topic with someone",
+      "Review & Recall":"Say the main points out loud without looking at your notes",
+      "Wrap-up":"Record a 1-minute summary of what you learned today"
+    },
+    R:{
+      "Warm-up":"Read through your notes from the last session for 5 minutes",
+      "Active Learning Block 1":"Read the chapter or notes carefully, highlight key words",
+      "Break & Move":"Take a short walk, then come back and write 3 things you remember",
+      "Active Learning Block 2":"Rewrite your notes in your own words as a summary",
+      "Review & Recall":"Write a list of the 5 most important things you learned",
+      "Wrap-up":"Add any questions to your learning journal for next time"
+    },
+    K:{
+      "Warm-up":"Use physical flashcards — sort them into 'I know' and 'I need to learn'",
+      "Active Learning Block 1":"Do practice questions, experiments, or build/draw a physical model",
+      "Break & Move":"Walk around and do movement actions that match key facts",
+      "Active Learning Block 2":"Do more practice problems or teach what you know to someone else",
+      "Review & Recall":"Physically sort flashcards one more time and check your answers",
+      "Wrap-up":"Write down any topics you need more practice on"
+    }
+  };
+
+  const rows = slots.map(slot=>{
+    const acts = dom.map(d=>`<td style="padding:8px 10px;border:1px solid #e5e7eb;font-size:0.82rem;color:#374151;vertical-align:top">${activities[d][slot.label]||'—'}</td>`).join('');
+    return `<tr>
+      <td style="padding:8px 10px;border:1px solid #e5e7eb;font-weight:700;color:#111;white-space:nowrap;background:#f9fafb;font-size:0.82rem">${slot.time}</td>
+      <td style="padding:8px 10px;border:1px solid #e5e7eb;font-weight:700;color:#374151;white-space:nowrap;font-size:0.82rem">${slot.label}</td>
+      ${acts}
+    </tr>`;
+  }).join('');
+
+  const headers = dom.map(d=>`<th style="padding:10px;background:${profiles[d].hex};color:#fff;font-size:0.82rem;font-weight:700">${profiles[d].emoji} ${profiles[d].name}</th>`).join('');
+
+  return `<table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
+    <thead><tr>
+      <th style="padding:10px;background:#1e293b;color:#fff;font-size:0.82rem">Time</th>
+      <th style="padding:10px;background:#1e293b;color:#fff;font-size:0.82rem">Block</th>
+      ${headers}
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+let currentRole='',currentQuestion=0,answers={};
+let learnerFirst='',learnerLast='',learnerSchool='',startTime=null;
+let portalAuthenticated=false,currentModalRecord=null;
+let currentPaymentRecord=null;
+let recordsCache=[];
+let supabaseClient=null;
+let supabaseReady=false;
+let currentPortalSession=null;
+let pendingAssessmentSaves={};
+
+const TOKEN_STORAGE_PREFIX='learnstyle_access_token_';
+
+function generateSecureToken(){
+  try{
+    const arr=new Uint8Array(24);
+    crypto.getRandomValues(arr);
+    return Array.from(arr,b=>b.toString(16).padStart(2,'0')).join('');
+  }catch(e){
+    return (Date.now().toString(36)+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2)).replace(/\./g,'');
+  }
+}
+function tokenStorageKey(recordId){
+  return TOKEN_STORAGE_PREFIX+String(recordId||'');
+}
+function storeRecordAccessToken(recordId, token){
+  if(recordId && token){ localStorage.setItem(tokenStorageKey(recordId), token); }
+}
+function getRecordAccessToken(recordId){
+  return localStorage.getItem(tokenStorageKey(recordId)) || '';
+}
+function clearRecordAccessToken(recordId){
+  localStorage.removeItem(tokenStorageKey(recordId));
+}
+function isPractitionerSession(session){
+  return !!(session && session.user && session.user.email);
+}
+
+function getDeviceFingerprint(){
+  const nav=navigator||{};
+  const scr=window.screen||{};
+  const tz=(Intl.DateTimeFormat().resolvedOptions().timeZone)||'';
+  return [nav.userAgent||'',nav.language||'',scr.width||'',scr.height||'',(scr.colorDepth||''),tz].join('|');
+}
+
+async function getClientContext(){
+  const context={
+    deviceFingerprint:getDeviceFingerprint(),
+    userAgent:navigator.userAgent||'',
+    language:navigator.language||'',
+    platform:navigator.platform||'',
+    screen:`${window.screen?.width||''}x${window.screen?.height||''}`,
+    timeZone:(Intl.DateTimeFormat().resolvedOptions().timeZone)||''
+  };
+  try{
+    const controller = new AbortController();
+    const timeoutId = setTimeout(()=>controller.abort(), 2500);
+    const res=await fetch('https://api.ipify.org?format=json',{cache:'no-store', signal: controller.signal});
+    clearTimeout(timeoutId);
+    if(res.ok){
+      const data=await res.json();
+      if(data&&data.ip) context.ipAddress=data.ip;
+    }
+  }catch(e){}
+  return context;
+}
+
+
+
+function hasEdgeFunctionConfig(){
+  return !!(EDGE_FUNCTIONS && EDGE_FUNCTIONS.SUBMIT_ASSESSMENT && EDGE_FUNCTIONS.SIGN_PROOF_UPLOAD && EDGE_FUNCTIONS.CONFIRM_PROOF_UPLOAD);
+}
+async function callEdgeFunction(url, payload){
+  const res = await fetch(url, {
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'apikey': SUPABASE_CONFIG.ANON_KEY,
+      'Authorization': `Bearer ${SUPABASE_CONFIG.ANON_KEY}`
+    },
+    body: JSON.stringify(payload)
+  });
+  const json = await res.json().catch(()=>({ok:false,error:'Invalid response from function.'}));
+  if(!res.ok || !json.ok){
+    throw new Error(json?.error || `Function call failed (${res.status})`);
+  }
+  return json;
+}
+async function submitAssessmentViaEdge(record){
+  if(!hasEdgeFunctionConfig()) throw new Error('Edge Function URLs are missing.');
+  const payload = {
+    id: record.id,
+    first_name: record.firstName || '',
+    last_name: record.lastName || '',
+    learner_name: record.name || `${record.firstName||''} ${record.lastName||''}`.trim(),
+    school: record.school || '',
+    role: record.role || '',
+    profile_name: record.profileName || '',
+    dominant: Array.isArray(record.dominant) ? record.dominant : [],
+    score_v: Number(record?.scores?.V ?? 0),
+    score_a: Number(record?.scores?.A ?? 0),
+    score_r: Number(record?.scores?.R ?? 0),
+    score_k: Number(record?.scores?.K ?? 0),
+    duration_minutes: Number(record.duration ?? 0),
+    assessment_date: record.date || new Date().toISOString(),
+    answers: record.answers || {},
+    pay_ref: record.payRef || '',
+    device_fingerprint: record.deviceFingerprint || null,
+    user_agent: record?.deviceInfo?.userAgent || null,
+    browser_language: record?.deviceInfo?.language || null,
+    platform: record?.deviceInfo?.platform || null,
+    screen_size: record?.deviceInfo?.screen || null,
+    timezone: record?.deviceInfo?.timeZone || null,
+    ip_address: record.ipAddress || null,
+    access_token: record.accessToken || ''
+  };
+  const json = await callEdgeFunction(EDGE_FUNCTIONS.SUBMIT_ASSESSMENT, payload);
+  const saved = normaliseRecordFromDb(json.row || {});
+  const accessToken = json.accessToken || saved.accessToken || '';
+  if(saved.id && accessToken){
+    saved.accessToken = accessToken;
+    storeRecordAccessToken(saved.id, accessToken);
+  }
+  recordsCache = recordsCache.filter(x=>x.id!==saved.id);
+  recordsCache.unshift(saved);
+  localStorage.setItem('learnstyle_last_record_backup', JSON.stringify(saved));
+  return saved;
+}
+async function signProofUploadViaEdge(recordId, fileName){
+  const accessToken = getRecordAccessToken(recordId);
+  if(!accessToken) throw new Error('This browser is not authorised for that learner record.');
+  return await callEdgeFunction(EDGE_FUNCTIONS.SIGN_PROOF_UPLOAD, { recordId, accessToken, fileName });
+}
+async function confirmProofUploadViaEdge(recordId, storagePath, fileName){
+  const accessToken = getRecordAccessToken(recordId);
+  if(!accessToken) throw new Error('This browser is not authorised for that learner record.');
+  const json = await callEdgeFunction(EDGE_FUNCTIONS.CONFIRM_PROOF_UPLOAD, { recordId, accessToken, storagePath, fileName });
+  const updated = normaliseRecordFromDb(json.row || {});
+  if(updated.id){
+    const idx = recordsCache.findIndex(r=>r.id===updated.id);
+    if(idx>-1) recordsCache[idx]=updated; else recordsCache.unshift(updated);
+    localStorage.setItem('learnstyle_last_record_backup', JSON.stringify(updated));
+  }
+  return updated;
+}
+
+function setPendingAssessmentSave(recordId, promise){
+  pendingAssessmentSaves[recordId]=promise.finally(()=>{ delete pendingAssessmentSaves[recordId]; });
+  return pendingAssessmentSaves[recordId];
+}
+
+async function waitForAssessmentSave(recordId, timeoutMs=1500){
+  if(!pendingAssessmentSaves[recordId]) return;
+  try{
+    await Promise.race([
+      pendingAssessmentSaves[recordId],
+      new Promise(resolve=>setTimeout(resolve, timeoutMs))
+    ]);
+  }catch(e){
+    console.error(e);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// ONE-TIME LOCK
+// ═══════════════════════════════════════════════════════
+async function checkAlreadyDone(){
+  const homeContent=document.getElementById('home-content');
+  const doneMsg=document.getElementById('already-done-msg');
+  const existingAction=document.getElementById('post-completion-action');
+  const existingBtn=document.getElementById('post-completion-btn');
+  if(existingAction) existingAction.remove();
+  if(existingBtn) existingBtn.remove();
+
+  homeContent.style.display='';
+  doneMsg.style.display='none';
+
+  const lastId=localStorage.getItem('learnstyle_last_id');
+  let rec=lastId?getRecords().find(r=>r.id===lastId):null;
+
+  if(!rec){
+    const completed=localStorage.getItem('learnstyle_completed');
+    if(!completed) return;
+    rec=getRecords().slice().sort((a,b)=>new Date(b.date)-new Date(a.date))[0]||null;
+    if(!rec){
+      const backup=localStorage.getItem('learnstyle_last_record_backup');
+      if(backup){ try{ rec=JSON.parse(backup); }catch(e){} }
+    }
+    if(!rec) return;
+  }
+
+  doneMsg.style.display='block';
+  doneMsg.querySelector('h2').textContent='Previous assessment found on this browser';
+  doneMsg.querySelector('p').textContent='A learner has already completed the assessment in this browser profile. You can still access the saved report/payment flow below, or clear browser data if this is a different learner using the same device.';
+
+  const p=document.createElement('p');
+  p.id='post-completion-action';
+  p.style.marginTop='1rem';
+  p.style.color='var(--muted)';
+  p.style.fontSize='0.875rem';
+  p.style.lineHeight='1.6';
+
+  const actionBtn=document.createElement('button');
+  actionBtn.id='post-completion-btn';
+  actionBtn.className='btn-primary';
+  actionBtn.style.marginTop='1.25rem';
+
+  if(rec.paymentStatus==='approved'){
+    actionBtn.textContent='View your detailed report';
+    actionBtn.onclick=()=>showPaidReport(rec);
+    p.textContent='The saved learner payment has been approved. The detailed report is available here.';
+  }else if(rec.paymentStatus==='pending'){
+    actionBtn.textContent='View payment details';
+    actionBtn.onclick=()=>showPaymentPage(rec.id);
+    p.textContent='The saved learner proof of payment has been submitted and is awaiting practitioner approval.';
+  }else{
+    actionBtn.textContent='Access the detailed report — '+CONFIG.REPORT_PRICE;
+    actionBtn.onclick=()=>showPaymentPage(rec.id);
+    p.textContent='The saved learner assessment is complete. Pay '+CONFIG.REPORT_PRICE+' and upload proof of payment to unlock the detailed report.';
+  }
+
+  doneMsg.appendChild(p);
+  doneMsg.appendChild(actionBtn);
+}
+
+
+// ═══════════════════════════════════════════════════════
+// NAV
+// ═══════════════════════════════════════════════════════
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(id==='portal') initPortal();
+  window.scrollTo(0,0);
+}
+
+// ═══════════════════════════════════════════════════════
+// SETUP
+// ═══════════════════════════════════════════════════════
+function selectRole(role,el){
+  currentRole=role;
+  document.querySelectorAll('.role-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');checkStart();
+}
+['learner-first','learner-last','learner-school'].forEach(id=>document.getElementById(id).addEventListener('input',checkStart));
+function checkStart(){
+  const f=document.getElementById('learner-first').value.trim();
+  const l=document.getElementById('learner-last').value.trim();
+  const s=document.getElementById('learner-school').value.trim();
+  document.getElementById('start-btn').disabled=!(currentRole&&f&&l&&s);
+}
+function startAssessment(){
+  learnerFirst=document.getElementById('learner-first').value.trim();
+  learnerLast=document.getElementById('learner-last').value.trim();
+  learnerSchool=document.getElementById('learner-school').value.trim();
+  answers={};currentQuestion=0;startTime=new Date();
+  renderQuestion();
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-assessment').classList.add('active');
+  document.getElementById('nav-home').classList.add('active');
+  document.getElementById('nav-portal').classList.remove('active');
+  document.getElementById('progress-name').textContent=learnerFirst+"'s assessment";
+  window.scrollTo(0,0);
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER QUESTION
+// ═══════════════════════════════════════════════════════
+function renderQuestion(){
+  const q=questions[currentQuestion],total=questions.length;
+  document.getElementById('progress-fill').style.width=((currentQuestion/total)*100)+'%';
+  document.getElementById('progress-text').textContent='Question '+(currentQuestion+1)+' of '+total;
+  const sel=answers[currentQuestion]||[];
+  const optsHTML=q.opts.map((opt,i)=>`
+    <button class="option-btn${sel.includes(i)?' selected':''}" onclick="toggleAnswer(${i},this)">
+      <span class="opt-letter">${opt.l}</span><span>${opt.t}</span>
+    </button>`).join('');
+  document.getElementById('question-container').innerHTML=`
+    <div class="q-card">
+      <div class="q-num">Question ${currentQuestion+1}</div>
+      <div class="q-text">${q.text}</div>
+      <span class="select-hint">✦ Pick up to 2 answers that feel most like you</span>
+      <div class="options-grid">${optsHTML}</div>
+    </div>`;
+  const btns=document.querySelectorAll('.option-btn');
+  btns.forEach((b,i)=>{
+    const ltr=b.querySelector('.opt-letter');
+    if(sel.includes(i)){ltr.style.background='var(--green)';ltr.style.color='#0A0A0A';ltr.style.borderColor='var(--green)';}
+    else{ltr.style.background='';ltr.style.color='';ltr.style.borderColor='';}
+  });
+  document.getElementById('prev-btn').style.visibility=currentQuestion===0?'hidden':'visible';
+  document.getElementById('next-btn').disabled=sel.length===0;
+  document.getElementById('next-btn').textContent=currentQuestion===total-1?'See my results! 🎉':'Next →';
+}
+
+function toggleAnswer(idx,btn){
+  if(!answers[currentQuestion]) answers[currentQuestion]=[];
+  const sel=answers[currentQuestion];
+  const pos=sel.indexOf(idx);
+  if(pos>-1){sel.splice(pos,1);btn.classList.remove('selected');}
+  else{
+    if(sel.length>=2){
+      const old=sel.shift();
+      const ob=document.querySelectorAll('.option-btn')[old];
+      if(ob){ob.classList.remove('selected');const l=ob.querySelector('.opt-letter');l.style.background='';l.style.color='';l.style.borderColor='';}
+    }
+    sel.push(idx);btn.classList.add('selected');
+  }
+  document.querySelectorAll('.option-btn').forEach((b,i)=>{
+    const ltr=b.querySelector('.opt-letter');
+    if(sel.includes(i)){ltr.style.background='var(--green)';ltr.style.color='#0A0A0A';ltr.style.borderColor='var(--green)';}
+    else{ltr.style.background='';ltr.style.color='';ltr.style.borderColor='';}
+  });
+  document.getElementById('next-btn').disabled=sel.length===0;
+}
+function nextQuestion(){if(currentQuestion<questions.length-1){currentQuestion++;renderQuestion();window.scrollTo(0,0);}else finishAssessment();}
+function prevQuestion(){if(currentQuestion>0){currentQuestion--;renderQuestion();window.scrollTo(0,0);}}
+
+// ═══════════════════════════════════════════════════════
+// SCORING
+// ═══════════════════════════════════════════════════════
+function calculateScores(){
+  const sc={V:0,A:0,R:0,K:0};
+  questions.forEach((q,qi)=>{(answers[qi]||[]).forEach(i=>{sc[q.opts[i].v]++;});});
+  return sc;
+}
+function getDominant(sc){
+  const max=Math.max(...Object.values(sc));
+  if(max===0) return['V'];
+  const thresh=Math.max(max-2,3);
+  const dom=Object.keys(sc).filter(k=>sc[k]>=thresh);
+  return dom.length?dom:[Object.keys(sc).reduce((a,b)=>sc[a]>=sc[b]?a:b)];
+}
+
+// ═══════════════════════════════════════════════════════
+// FINISH ASSESSMENT
+// ═══════════════════════════════════════════════════════
+async function finishAssessment(){
+  const scores=calculateScores();
+  const dominant=getDominant(scores);
+  const profileName=buildProfileName(dominant);
+  const endTime=new Date();
+  const duration=Math.max(1,Math.round((endTime-startTime)/60000));
+  const payRef=CONFIG.BANK_REF_PREFIX+'-'+Date.now().toString(36).toUpperCase();
+
+  const record={
+    id:Date.now().toString(),
+    firstName:learnerFirst,lastName:learnerLast,
+    name:learnerFirst+' '+learnerLast,
+    school:learnerSchool,role:currentRole,
+    scores,profileName,dominant,
+    date:endTime.toISOString(),duration,
+    payRef,paymentStatus:'unpaid',
+    accessToken:generateSecureToken(),
+    answers:{...answers},
+    ipAddress:'',
+    deviceFingerprint:getDeviceFingerprint(),
+    deviceInfo:{
+      userAgent:navigator.userAgent||'',
+      language:navigator.language||'',
+      platform:navigator.platform||'',
+      screen:`${window.screen?.width||''}x${window.screen?.height||''}`,
+      timeZone:(Intl.DateTimeFormat().resolvedOptions().timeZone)||''
+    }
+  };
+
+  try{ localStorage.setItem('learnstyle_last_record_backup', JSON.stringify(record)); }catch(e){}
+  localStorage.setItem('learnstyle_completed','true');
+  localStorage.setItem('learnstyle_last_id',record.id);
+  if(record.id && record.accessToken){ storeRecordAccessToken(record.id, record.accessToken); }
+  recordsCache = Array.isArray(recordsCache) ? recordsCache.filter(r=>r.id!==record.id) : [];
+  recordsCache.unshift(record);
+  currentPaymentRecord = record;
+
+  renderBasicResults(record);
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-results').classList.add('active');
+  document.getElementById('nav-home').classList.add('active');
+  document.getElementById('nav-portal').classList.remove('active');
+  window.scrollTo(0,0);
+
+  setPendingAssessmentSave(record.id, (async()=>{
+    try{
+      const clientContext=await getClientContext();
+      record.ipAddress=clientContext.ipAddress||'';
+      record.deviceFingerprint=clientContext.deviceFingerprint||record.deviceFingerprint;
+      record.deviceInfo={
+        userAgent:clientContext.userAgent||record.deviceInfo.userAgent,
+        language:clientContext.language||record.deviceInfo.language,
+        platform:clientContext.platform||record.deviceInfo.platform,
+        screen:clientContext.screen||record.deviceInfo.screen,
+        timeZone:clientContext.timeZone||record.deviceInfo.timeZone
+      };
+
+      const savedRecord = await saveRecord(record) || record;
+      try{ localStorage.setItem('learnstyle_last_record_backup', JSON.stringify(savedRecord)); }catch(e){}
+      localStorage.setItem('learnstyle_last_id',savedRecord.id);
+      if(savedRecord.id && savedRecord.accessToken){ storeRecordAccessToken(savedRecord.id, savedRecord.accessToken); }
+      notify('Assessment saved to Supabase.', 'success');
+      return savedRecord;
+    }catch(e){
+      console.error('SAVE ERROR:', e);
+      const msg = e?.message || e?.details || e?.hint || JSON.stringify(e);
+      notify('Cloud save failed, but the results are still available on this device: '+escapeHtml(msg), 'error');
+      throw e;
+    }
+  })());
+}
+
+// ═══════════════════════════════════════════════════════
+// BASIC RESULTS (what learner sees — no detailed methods)
+// ═══════════════════════════════════════════════════════
+function renderBasicResults(record){
+  const{scores,dominant,profileName,firstName}=record;
+  const maxScore=Object.values(scores).reduce((a,b)=>a+b,0);
+  const varkOrder=['V','A','R','K'];
+  const varkLong={V:'Visual',A:'Auditory',R:'Reading & Writing',K:'Kinaesthetic'};
+  const badgesHTML=dominant.map(d=>`<span class="vark-badge color-${d}">${profiles[d].emoji} ${profiles[d].name}</span>`).join('');
+  const barsHTML=varkOrder.map(k=>{
+    const pct=maxScore>0?Math.round((scores[k]/maxScore)*100):0;
+    return `<div class="score-row">
+      <span class="score-label color-${k}-text">${varkLong[k]}</span>
+      <div class="score-track" style="position:relative">
+        <div class="score-fill color-${k}-bar" style="width:${pct}%"></div>
+      </div>
+      <span class="score-pct">${pct}%</span>
+    </div>`;
+  }).join('');
+
+  const styleNames=dominant.map(d=>profiles[d].name).join(' & ');
+
+  document.getElementById('results-container').innerHTML=`
+    <div class="result-hero">
+      <div class="hero-tag">Assessment Complete!</div>
+      <h2 style="font-family:'Fraunces',serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:600;margin:0.5rem 0;letter-spacing:-0.02em;">
+        You are a<br><em style="color:var(--green);font-style:italic;">${profileName}</em>
+      </h2>
+      <p style="color:var(--muted);font-size:1rem;max-width:520px;margin:0 auto 0.5rem">${dominant.map(d=>profiles[d].short).join(' And — ')}</p>
+      <div class="vark-badges">${badgesHTML}</div>
+    </div>
+
+    <div class="score-bars">
+      <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:1rem">Your VARK score breakdown</div>
+      ${barsHTML}
+    </div>
+
+    <div style="background:var(--surface);border:1px solid rgba(46,204,138,0.25);border-radius:var(--radius);padding:2rem;text-align:center;margin-bottom:1.5rem">
+      <div style="font-size:2rem;margin-bottom:0.75rem">🎉</div>
+      <h3 style="font-family:'Fraunces',serif;font-size:1.4rem;margin-bottom:0.75rem">Great work completing the assessment!</h3>
+      <p style="color:var(--muted);line-height:1.7;font-size:0.95rem;max-width:480px;margin:0 auto 1.5rem">
+        You are a <strong style="color:var(--text)">${styleNames}</strong>.
+        Your results have been shared with your practitioner.
+      </p>
+      <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:1.25rem;margin-bottom:1.5rem;text-align:left;max-width:480px;margin-left:auto;margin-right:auto">
+        <p style="font-weight:700;margin-bottom:0.5rem;font-size:0.9rem">Want a personalised detailed report?</p>
+        <p style="color:var(--muted);font-size:0.875rem;line-height:1.6">Get your full study toolkit with tailored strategies, a 45-minute study timetable, and tools designed specifically for your learning style.</p>
+      </div>
+      <button class="btn-primary" style="max-width:none;width:auto;padding:1rem 2.5rem;" onclick="showPaymentPage('${record.id}')">
+        Get my detailed report — ${CONFIG.REPORT_PRICE}
+      </button>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+// PAYMENT PAGE
+// ═══════════════════════════════════════════════════════
+async function showPaymentPage(recordId){
+  let record=getRecords().find(r=>r.id===recordId);
+
+  if(!record && currentPaymentRecord && currentPaymentRecord.id===recordId){
+    record=currentPaymentRecord;
+  }
+
+  if(!record){
+    const backup=localStorage.getItem('learnstyle_last_record_backup');
+    if(backup){
+      try{
+        const parsed=JSON.parse(backup);
+        if(parsed && parsed.id===recordId) record=parsed;
+      }catch(e){ console.error(e); }
+    }
+  }
+
+  try{ await waitForAssessmentSave(recordId, 1200); }catch(e){ console.error(e); }
+  if(!record) record=getRecords().find(r=>r.id===recordId) || currentPaymentRecord || record;
+
+  if(!record){
+    try{
+      record=await fetchRecordById(recordId);
+    }catch(e){ console.error(e); }
+  }
+
+  if(!record){
+    notify('Could not open the payment page yet. Please try again in a moment.', 'error');
+    return;
+  }
+
+  recordsCache = Array.isArray(recordsCache) ? recordsCache.filter(r=>r.id!==record.id) : [];
+  recordsCache.unshift(record);
+  currentPaymentRecord=record;
+
+  document.getElementById('payment-container').innerHTML=`
+    <div style="text-align:center;margin-bottom:2rem">
+      <h2 style="font-family:'Fraunces',serif;font-size:2rem;margin-bottom:0.5rem">Get your full report</h2>
+      <p style="color:var(--muted)">Personalised study strategies and 45-minute study timetable for ${record.firstName}</p>
+    </div>
+
+    <div class="payment-card" style="text-align:center">
+      <div style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:0.5rem">Report price</div>
+      <div class="price-badge">
+        <span class="price-currency">R</span><span class="price-amount">100</span>
+      </div>
+      <p style="color:var(--muted);font-size:0.875rem">Includes personalised study methods, tailored strategies, and your 45-minute study timetable</p>
+    </div>
+
+    <div class="payment-card">
+      <h3 style="font-size:1rem;font-weight:800;margin-bottom:0.75rem;color:var(--text)">🏦 EFT / Bank Transfer</h3>
+      <p style="color:var(--muted);font-size:0.875rem;margin-bottom:1rem;line-height:1.6">Transfer to the account below and use your reference number. Upload your proof of payment below. Your report will be released once your practitioner confirms payment.</p>
+      
+      <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:0.5rem">Your payment reference</div>
+      <div class="ref-box">
+        <div style="font-size:0.8rem;color:var(--muted);margin-bottom:0.25rem">Use this exact reference when making payment</div>
+        <div class="ref-code">${record.payRef}</div>
+      </div>
+
+      <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:0.5rem;margin-top:1rem">Bank details</div>
+      <div class="bank-details">
+        <div class="bank-row"><span class="bank-key">Bank</span><span class="bank-val">${CONFIG.BANK_NAME}</span></div>
+        <div class="bank-row"><span class="bank-key">Account name</span><span class="bank-val">${CONFIG.ACCOUNT_NAME}</span></div>
+        <div class="bank-row"><span class="bank-key">Account number</span><span class="bank-val">${CONFIG.ACCOUNT_NUMBER}</span></div>
+        <div class="bank-row"><span class="bank-key">Account type</span><span class="bank-val">${CONFIG.ACCOUNT_TYPE}</span></div>
+        <div class="bank-row"><span class="bank-key">Branch code</span><span class="bank-val">${CONFIG.BRANCH_CODE}</span></div>
+        <div class="bank-row"><span class="bank-key">Amount</span><span class="bank-val" style="color:var(--green)">${CONFIG.REPORT_PRICE}</span></div>
+        <div class="bank-row"><span class="bank-key">Reference</span><span class="bank-val" style="color:var(--amber)">${record.payRef}</span></div>
+      </div>
+
+      <div style="margin-top:1.25rem">
+        <div style="font-size:0.8rem;font-weight:700;color:var(--muted);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.08em">Upload proof of payment</div>
+        <div class="upload-area" onclick="document.getElementById('pop-upload').click()">
+          <div style="font-size:1.5rem;margin-bottom:0.5rem">📎</div>
+          <div style="font-weight:700;margin-bottom:0.25rem">Click to upload proof of payment</div>
+          <div style="color:var(--muted);font-size:0.82rem">Screenshot, PDF, or photo of payment confirmation</div>
+        </div>
+        <input type="file" id="pop-upload" accept="image/*,.pdf,.jpg,.jpeg,.png,.heic,.heif,application/pdf,image/heic,image/heif" style="display:none" onchange="handlePOPUpload(event,'${record.id}')">
+        <div id="pop-status" style="display:none;background:rgba(46,204,138,0.1);border:1px solid rgba(46,204,138,0.3);border-radius:var(--radius-sm);padding:0.75rem;text-align:center;font-size:0.875rem;color:var(--green)"></div>
+      </div>
+
+      <button class="btn-amber" style="margin-top:1.25rem;" id="eft-submit-btn" onclick="submitEFTPayment('${record.id}')" disabled>
+        Submit payment — awaiting confirmation
+      </button>
+    </div>
+
+    <p style="text-align:center;color:var(--muted);font-size:0.8rem;margin-top:1rem">
+      Questions? Contact ${CONFIG.PRACTITIONER_EMAIL}
+    </p>`;
+
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-payment').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+
+function setPOPStatus(message, state="info") {
+  const el = document.getElementById('pop-status');
+  if (!el) return;
+  const styles = {
+    info: {bg: 'rgba(74,144,217,0.1)', border: 'rgba(74,144,217,0.3)', color: '#6AABF0'},
+    success: {bg: 'rgba(46,204,138,0.1)', border: 'rgba(46,204,138,0.3)', color: '#2ECC8A'},
+    error: {bg: 'rgba(255,124,92,0.1)', border: 'rgba(255,124,92,0.35)', color: '#FF7C5C'}
+  };
+  const s = styles[state] || styles.info;
+  el.style.display = 'block';
+  el.style.background = s.bg;
+  el.style.border = `1px solid ${s.border}`;
+  el.style.color = s.color;
+  el.textContent = message;
+}
+
+function blobToFile(blob, name, type) {
+  return new File([blob], name, { type: type || blob.type || 'application/octet-stream', lastModified: Date.now() });
+}
+
+function sanitizeFilename(name='upload') {
+  return name.replace(/[^a-zA-Z0-9._-]+/g, '_');
+}
+
+async function readImageBitmapFromFile(file) {
+  if ('createImageBitmap' in window) {
+    try {
+      return await createImageBitmap(file);
+    } catch (e) {}
+  }
+  return await new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve(img);
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error('Image could not be opened in this browser.'));
+    };
+    img.src = url;
+  });
+}
+
+async function convertHeicIfNeeded(file) {
+  const lower = (file.name || '').toLowerCase();
+  const type = (file.type || '').toLowerCase();
+  const isHeic = lower.endsWith('.heic') || lower.endsWith('.heif') || type.includes('heic') || type.includes('heif');
+  if (!isHeic) return file;
+  if (typeof heic2any !== 'function') {
+    throw new Error('This phone photo format is not supported here yet. Please upload a screenshot or JPG image.');
+  }
+  const out = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.85 });
+  const blob = Array.isArray(out) ? out[0] : out;
+  const base = sanitizeFilename((file.name || 'proof').replace(/\.(heic|heif)$/i, ''));
+  return blobToFile(blob, `${base || 'proof'}.jpg`, 'image/jpeg');
+}
+
+async function compressImageForUpload(file) {
+  const bitmap = await readImageBitmapFromFile(file);
+  const width = bitmap.width || bitmap.naturalWidth;
+  const height = bitmap.height || bitmap.naturalHeight;
+  const maxDim = 1800;
+  const scale = Math.min(1, maxDim / Math.max(width, height));
+  const targetW = Math.max(1, Math.round(width * scale));
+  const targetH = Math.max(1, Math.round(height * scale));
+  const canvas = document.createElement('canvas');
+  canvas.width = targetW;
+  canvas.height = targetH;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(bitmap, 0, 0, targetW, targetH);
+  const blob = await new Promise((resolve, reject) => {
+    canvas.toBlob(b => b ? resolve(b) : reject(new Error('Image compression failed.')), 'image/jpeg', 0.82);
+  });
+  if (bitmap.close) { try { bitmap.close(); } catch (e) {} }
+  const base = sanitizeFilename((file.name || 'proof').replace(/\.[^.]+$/, ''));
+  return blobToFile(blob, `${base || 'proof'}.jpg`, 'image/jpeg');
+}
+
+async function preparePOPFile(file) {
+  const maxPdfBytes = 8 * 1024 * 1024;
+  const maxOtherBytes = 10 * 1024 * 1024;
+  const lowerType = (file.type || '').toLowerCase();
+  const lowerName = (file.name || '').toLowerCase();
+  if (lowerType === 'application/pdf' || lowerName.endsWith('.pdf')) {
+    if (file.size > maxPdfBytes) throw new Error('PDF is too large. Please upload a PDF smaller than 8MB or use a screenshot.');
+    return file;
+  }
+  let processed = await convertHeicIfNeeded(file);
+  if ((processed.type || '').startsWith('image/')) {
+    processed = await compressImageForUpload(processed);
+  }
+  if (processed.size > maxOtherBytes) throw new Error('Image is still too large after processing. Please use a screenshot.');
+  return processed;
+}
+
+async function uploadPreparedPOP(storagePath, preparedFile){
+  const bucket = supabaseClient.storage.from(SUPABASE_CONFIG.STORAGE_BUCKET);
+  const contentType = preparedFile.type || 'application/octet-stream';
+  const attempts = [
+    () => bucket.upload(storagePath, preparedFile, { upsert: true, contentType, cacheControl: '3600' }),
+    () => bucket.upload(storagePath, new Blob([preparedFile], { type: contentType }), { upsert: true, contentType, cacheControl: '3600' }),
+    async () => {
+      const ab = await preparedFile.arrayBuffer();
+      return bucket.upload(storagePath, ab, { upsert: true, contentType, cacheControl: '3600' });
+    },
+    async () => {
+      const ab = await preparedFile.arrayBuffer();
+      return bucket.upload(storagePath, new Uint8Array(ab), { upsert: true, contentType, cacheControl: '3600' });
+    }
+  ];
+
+  let lastError = null;
+  for (let i = 0; i < attempts.length; i++) {
+    try {
+      const { error } = await attempts[i]();
+      if (!error) return;
+      lastError = error;
+      console.error('UPLOAD ATTEMPT FAILED', i + 1, error);
+    } catch (err) {
+      lastError = err;
+      console.error('UPLOAD ATTEMPT CRASHED', i + 1, err);
+    }
+  }
+  throw lastError || new Error('Upload failed before reaching storage.');
+}
+
+async function handlePOPUpload(e, recordId) {
+  const file = e?.target?.files?.[0];
+  if (!file) return;
+
+  if (!supabaseReady) {
+    notify('Add your Supabase URL and anon key before uploading proof of payment.', 'error');
+    return;
+  }
+
+  const submitBtn = document.getElementById('eft-submit-btn');
+
+  try {
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Uploading proof of payment...';
+    }
+
+    setPOPStatus('Saving learner record securely before upload...', 'info');
+    await waitForAssessmentSave(recordId);
+
+    setPOPStatus('Preparing file for upload...', 'info');
+    const preparedFile = await preparePOPFile(file);
+
+    const accessToken = getRecordAccessToken(recordId);
+    if (!accessToken) {
+      throw new Error('This browser is not authorised for that learner record.');
+    }
+
+    const safeName = (preparedFile.name || 'proof-of-payment').replace(/[^a-zA-Z0-9._-]+/g, '-');
+    const ext = safeName.includes('.') ? safeName.split('.').pop() : 'bin';
+    const storagePath = `proofs/${recordId}/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+
+    setPOPStatus(`Uploading ${preparedFile.name} to secure storage...`, 'info');
+
+    const { error: uploadError } = await supabaseClient
+      .storage
+      .from(SUPABASE_CONFIG.STORAGE_BUCKET)
+      .upload(storagePath, preparedFile, {
+        cacheControl: '3600',
+        upsert: false,
+        contentType: preparedFile.type || 'application/octet-stream'
+      });
+
+    if (uploadError) {
+      throw new Error(uploadError.message || 'Storage upload failed.');
+    }
+
+    setPOPStatus('Finalising learner record...', 'info');
+
+    const updatedRecord = await updateRecord(recordId, {
+      popStoragePath: storagePath,
+      popUploadedDate: new Date().toISOString(),
+      paymentSubmittedDate: new Date().toISOString(),
+      popFileName: preparedFile.name,
+      paymentStatus: 'pending'
+    });
+
+    if (!updatedRecord || !updatedRecord.popStoragePath) {
+      throw new Error('The upload completed, but the learner record was not updated with the proof path.');
+    }
+
+    const idx = recordsCache.findIndex(r => String(r.id) === String(recordId));
+    if (idx > -1) {
+      recordsCache[idx] = { ...recordsCache[idx], ...updatedRecord };
+      currentPaymentRecord = recordsCache[idx];
+    } else {
+      currentPaymentRecord = updatedRecord;
+      recordsCache.unshift(updatedRecord);
+    }
+
+    localStorage.setItem('learnstyle_last_record_backup', JSON.stringify(currentPaymentRecord));
+    setPOPStatus('Uploaded successfully: ' + preparedFile.name, 'success');
+
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Complete submission';
+    }
+
+    e.target.value = '';
+  } catch (err) {
+    console.error('UPLOAD ERROR:', err);
+
+    let msg = err?.message || err?.details || err?.hint || 'Upload failed. Please try a screenshot or a smaller PDF.';
+
+    if (/Cannot coerce the result to a single JSON object/i.test(msg)) {
+      msg = 'The file uploaded, but Supabase returned multiple matching database rows for this learner. This version now saves the payment status locally after the upload so it can continue even when duplicate rows exist.';
+    }
+
+    if (/body can not be decoded as form data/i.test(msg) || /body cannot be decoded as form data/i.test(msg)) {
+      msg = 'The upload service is not accepting multipart form data. This file now uses direct Supabase Storage upload instead.';
+    }
+
+    setPOPStatus('Upload failed: ' + msg, 'error');
+    notify('Could not upload proof of payment. ' + escapeHtml(msg), 'error');
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submit payment — awaiting confirmation';
+    }
+  }
+}
+
+async function submitEFTPayment(recordId){
+  try{
+    await waitForAssessmentSave(recordId);
+    const rec=getRecords().find(r=>r.id===recordId) || currentPaymentRecord;
+    if(!rec || !rec.popStoragePath || rec.paymentStatus!=='pending'){
+      notify('Upload proof of payment first. The secure server will mark it as pending automatically.', 'error');
+      return;
+    }
+    generateProofOfPaymentPDF(rec||{id:recordId});
+    document.getElementById('eft-submit-btn').textContent='Submitted - awaiting confirmation';
+    document.getElementById('eft-submit-btn').disabled=true;
+    const msg=document.createElement('div');
+    msg.style.cssText='background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:12px;padding:1.25rem;text-align:center;margin-top:1rem;font-size:0.9rem;color:#F5B93A;line-height:1.6';
+    msg.innerHTML='<strong>Payment submitted.</strong><br>Your practitioner can now review the proof of payment from any device and release the report after approval.';
+    document.getElementById('payment-container').appendChild(msg);
+  }catch(e){
+    console.error('PAYMENT SUBMIT ERROR:', e);
+    const msg = e?.message || e?.details || e?.hint || 'Upload proof of payment first.';
+    notify('Could not submit the payment notification. '+escapeHtml(msg), 'error');
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════
+// PROOF OF PAYMENT PDF
+// ═══════════════════════════════════════════════════════
+function generateProofOfPaymentPDF(rec){
+  function buildPOP(rec){
+    const JsPDF=window.jspdf.jsPDF;
+    const doc=new JsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const W=210,H=297,M=20,cW=W-40;
+    const ds=new Date().toLocaleDateString('en-ZA',{day:'numeric',month:'long',year:'numeric'});
+    const ts=new Date().toLocaleTimeString('en-ZA',{hour:'2-digit',minute:'2-digit'});
+
+    doc.setFillColor(255,255,255);doc.rect(0,0,W,H,'F');
+    // Header bar
+    doc.setFillColor(46,204,138);doc.rect(0,0,W,4,'F');
+    doc.setFillColor(248,250,252);doc.rect(0,4,W,50,'F');
+    doc.setDrawColor(220,225,230);doc.line(0,54,W,54);
+
+    doc.setFontSize(11);doc.setFont('helvetica','bold');doc.setTextColor(46,204,138);
+    doc.text('learnstyle toolkit',M,16);
+    doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(120,120,120);
+    doc.text('Payment Notification',M,23);
+    doc.setFontSize(20);doc.setFont('helvetica','bold');doc.setTextColor(30,30,30);
+    doc.text('Proof of Payment',M,38);
+    doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(130,130,130);
+    doc.text('Generated: '+ds+' at '+ts,M,46);
+
+    // Status badge
+    doc.setFillColor(245,166,35);doc.roundedRect(W-M-40,12,40,12,3,3,'F');
+    doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);
+    doc.text('PENDING',W-M-20,19.5,{align:'center'});
+
+    let y=66;
+    // Reference section
+    doc.setFillColor(255,250,240);doc.setDrawColor(245,166,35);doc.setLineWidth(0.3);
+    doc.roundedRect(M,y,cW,24,2,2,'FD');
+    doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(130,100,0);
+    doc.text('PAYMENT REFERENCE',M+6,y+8);
+    doc.setFontSize(18);doc.setFont('helvetica','bold');doc.setTextColor(180,120,0);
+    doc.text(rec.payRef||'—',M+cW/2,y+19,{align:'center'});
+    y+=32;
+
+    // Details table
+    const rows=[
+      ['Learner Name',rec.name||'—'],
+      ['School',rec.school||'—'],
+      ['Learning Profile',rec.profileName||'—'],
+      ['Report Price',CONFIG.REPORT_PRICE],
+      ['Bank',CONFIG.BANK_NAME],
+      ['Account Name',CONFIG.ACCOUNT_NAME],
+      ['Account Number',CONFIG.ACCOUNT_NUMBER],
+      ['Branch Code',CONFIG.BRANCH_CODE],
+      ['Submission Date',ds+' at '+ts]
+    ];
+    doc.setFontSize(10);doc.setFont('helvetica','bold');doc.setTextColor(30,30,30);
+    doc.text('Payment Details',M,y);
+    y+=7;
+    rows.forEach(([k,v],i)=>{
+      const bg=i%2===0?[252,252,252]:[245,247,250];
+      doc.setFillColor(...bg);doc.rect(M,y,cW,9,'F');
+      doc.setDrawColor(220,225,230);doc.setLineWidth(0.2);doc.line(M,y+9,M+cW,y+9);
+      doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(120,120,120);
+      doc.text(k,M+5,y+6);
+      doc.setFont('helvetica','bold');doc.setTextColor(35,35,35);
+      doc.text(String(v),M+cW-5,y+6,{align:'right'});
+      y+=9;
+    });
+    y+=10;
+
+    // Instructions
+    doc.setFillColor(232,246,255);doc.setDrawColor(74,144,217);doc.setLineWidth(0.3);
+    doc.roundedRect(M,y,cW,32,2,2,'FD');
+    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(0,80,160);
+    doc.text('What happens next?',M+6,y+9);
+    doc.setFont('helvetica','normal');doc.setTextColor(0,60,120);doc.setFontSize(8);
+    const steps=['1. Send your proof of payment to '+CONFIG.PRACTITIONER_EMAIL,'2. Use reference '+( rec.payRef||'—')+' in your email subject line','3. Your practitioner will verify and release your report within 24 hours','4. Return to the assessment site to access your detailed report'];
+    steps.forEach((s,i)=>doc.text(s,M+6,y+16+i*5));
+    y+=40;
+
+    // Footer
+    doc.setFillColor(248,250,252);doc.rect(0,H-18,W,18,'F');
+    doc.setDrawColor(220,225,230);doc.line(0,H-18,W,H-18);
+    doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(130,130,130);
+    doc.text('learnstyle toolkit  ·  This document is proof of payment submission, not confirmation of receipt.',W/2,H-10,{align:'center'});
+    doc.text('Contact '+CONFIG.PRACTITIONER_EMAIL+' for queries.',W/2,H-5,{align:'center'});
+
+    doc.save('proof-of-payment-'+( rec.payRef||'LST')+'.pdf');
+  }
+
+  if(window.jspdf&&window.jspdf.jsPDF){buildPOP(rec);return;}
+  const s=document.createElement('script');
+  s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+  s.onload=()=>buildPOP(rec);
+  document.head.appendChild(s);
+}
+
+// ═══════════════════════════════════════════════════════
+// PAID REPORT (released by practitioner)
+// ═══════════════════════════════════════════════════════
+function showPaidReport(record){
+  const{scores,dominant,profileName,firstName,school}=record;
+  const maxScore=Object.values(scores).reduce((a,b)=>a+b,0);
+  const varkOrder=['V','A','R','K'];
+  const varkLong={V:'Visual',A:'Auditory',R:'Reading & Writing',K:'Kinaesthetic'};
+  const badgesHTML=dominant.map(d=>`<span class="vark-badge color-${d}">${profiles[d].emoji} ${profiles[d].name}</span>`).join('');
+  const barsHTML=varkOrder.map(k=>{
+    const pct=maxScore>0?Math.round((scores[k]/maxScore)*100):0;
+    return `<div class="score-row"><span class="score-label color-${k}-text">${varkLong[k]}</span><div class="score-track"><div class="score-fill color-${k}-bar" style="width:${pct}%"></div></div><span class="score-pct">${pct}%</span></div>`;
+  }).join('');
+
+  let tipsHTML='';
+  if(dominant.length===1){
+    const p=profiles[dominant[0]];
+    tipsHTML=`<div style="background:rgba(${p.color.join(',')},0.1);border:1px solid rgba(${p.color.join(',')},0.22);border-radius:var(--radius);padding:1.5rem;">
+      <h3 class="color-${dominant[0]}-text" style="font-size:1rem;font-weight:800;margin-bottom:0.75rem">${p.emoji} ${p.name} — Study Strategies</h3>
+      <p style="font-size:0.9rem;line-height:1.65;color:rgba(240,237,232,0.8);margin-bottom:1rem">${p.desc}</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.75rem">
+        ${p.tips.map(t=>`<div style="background:var(--surface2);border-radius:10px;padding:0.9rem 1rem;font-size:0.875rem;display:flex;gap:0.6rem;align-items:flex-start;line-height:1.45;color:rgba(240,237,232,0.85)"><span style="flex-shrink:0;font-size:1rem">${t.i}</span><span>${t.t}</span></div>`).join('')}
+      </div>
+    </div>`;
+  } else {
+    const combinedTips=[];
+    dominant.forEach(d=>profiles[d].tips.forEach(t=>combinedTips.push({...t,d})));
+    const descBlock=dominant.map(d=>`<strong class="color-${d}-text">${profiles[d].emoji} ${profiles[d].name}:</strong> ${profiles[d].desc}`).join('<br><br>');
+    tipsHTML=`<div style="background:rgba(56,190,201,0.07);border:1px solid rgba(56,190,201,0.22);border-radius:var(--radius);padding:1.5rem;">
+      <h3 style="color:#38BEC9;font-size:1rem;font-weight:800;margin-bottom:0.75rem">✨ Combined Style — Your Full Study Toolkit</h3>
+      <p style="margin-bottom:1.25rem;line-height:1.7;font-size:0.9rem;color:rgba(240,237,232,0.75)">${descBlock}</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.75rem">
+        ${combinedTips.map(t=>`<div style="background:var(--surface2);border-radius:10px;padding:0.9rem 1rem;font-size:0.875rem;display:flex;gap:0.6rem;align-items:flex-start;line-height:1.45;color:rgba(240,237,232,0.85)"><span style="flex-shrink:0;font-size:1rem">${t.i}</span><span>${t.t}</span></div>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  const studyTableHTML=buildStudyTable(dominant);
+
+  document.getElementById('paid-report-container').innerHTML=`
+    <div class="result-hero">
+      <div class="hero-tag" style="background:rgba(245,166,35,0.12);color:var(--amber);border-color:rgba(245,166,35,0.3)">✨ Your Detailed Report</div>
+      <h2 style="font-family:'Fraunces',serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:600;margin:0.5rem 0;letter-spacing:-0.02em;">
+        ${firstName}'s Learning Report
+      </h2>
+      <p style="color:var(--muted);font-size:0.9rem">${school||''}</p>
+      <div class="vark-badges">${badgesHTML}</div>
+    </div>
+
+    <div class="score-bars" style="margin-bottom:1.5rem">
+      <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:1rem">Your VARK score breakdown</div>
+      ${barsHTML}
+    </div>
+
+    <div style="margin-bottom:1.5rem">${tipsHTML}</div>
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.5rem">
+      <h3 style="font-size:1rem;font-weight:800;margin-bottom:0.25rem;color:var(--text)">📅 Your 45-Minute Study Session Plan</h3>
+      <p style="color:var(--muted);font-size:0.85rem;margin-bottom:1rem">Use this plan every time you sit down to study. Each block is timed for maximum focus.</p>
+      <div style="overflow-x:auto;border-radius:8px;overflow:hidden">${studyTableHTML}</div>
+    </div>
+
+    <div style="text-align:center;margin-top:2rem">
+      <p style="color:var(--muted);font-size:0.85rem">Questions about your report? Contact ${CONFIG.PRACTITIONER_EMAIL}</p>
+    </div>`;
+
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-paid-report').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ═══════════════════════════════════════════════════════
+// SUPABASE + STORAGE
+// ═══════════════════════════════════════════════════════
+function hasSupabaseConfig(){
+  return !!(SUPABASE_CONFIG && SUPABASE_CONFIG.URL && SUPABASE_CONFIG.ANON_KEY);
+}
+function escapeHtml(str=''){
+  return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function setLoginError(msg=''){
+  const el=document.getElementById('login-error');
+  if(!el) return;
+  el.textContent=msg || 'Unable to sign in. Check your Supabase settings, email, or password.';
+  el.style.display=msg?'block':'none';
+}
+function notify(message,type='info'){
+  const old=document.getElementById('app-notice');
+  if(old) old.remove();
+  const d=document.createElement('div');
+  d.id='app-notice';
+  const palette=type==='error'
+    ? {bg:'rgba(255,124,92,0.12)',bd:'rgba(255,124,92,0.3)',tx:'#FF9C88'}
+    : type==='success'
+    ? {bg:'rgba(46,204,138,0.12)',bd:'rgba(46,204,138,0.3)',tx:'#2ECC8A'}
+    : {bg:'rgba(74,144,217,0.12)',bd:'rgba(74,144,217,0.3)',tx:'#8CB8EE'};
+  d.style.cssText=`max-width:960px;margin:1rem auto 0;padding:0.95rem 1rem;border-radius:14px;border:1px solid ${palette.bd};background:${palette.bg};color:${palette.tx};font-size:0.9rem;line-height:1.6`;
+  d.innerHTML=message;
+  document.body.insertBefore(d, document.body.firstChild.nextSibling);
+}
+function initSupabase(){
+  if(!hasSupabaseConfig()) return false;
+  if(!window.supabase || !window.supabase.createClient) return false;
+  if(!supabaseClient){
+    supabaseClient=window.supabase.createClient(SUPABASE_CONFIG.URL, SUPABASE_CONFIG.ANON_KEY, {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+  }
+  supabaseReady=true;
+  return true;
+}
+function hydrateLocalRecordCache(){
+  try{
+    const backupRaw=localStorage.getItem('learnstyle_last_record_backup');
+    if(!backupRaw) return;
+    const backup=JSON.parse(backupRaw);
+    if(!backup || !backup.id) return;
+    const exists=recordsCache.some(r=>r.id===backup.id);
+    if(!exists) recordsCache.unshift(backup);
+  }catch(e){}
+}
+
+async function bootstrapApp(){
+  const ready=initSupabase();
+  hydrateLocalRecordCache();
+  if(ready){
+    try{
+      const {data:{session}}=await supabaseClient.auth.getSession();
+      currentPortalSession=session;
+      portalAuthenticated=!!session;
+      if(portalAuthenticated){
+        await loadRecordsFromCloud();
+      }
+    }catch(e){
+      console.error(e);
+      notify('Supabase connected, but practitioner data could not be loaded.', 'error');
+    }
+  }else{
+    notify('This HTML is Supabase-ready. Add your Supabase URL and anon key in the config section before publishing to GitHub.', 'info');
+  }
+  await checkAlreadyDone();
+}
+window.addEventListener('DOMContentLoaded', bootstrapApp);
+
+function dedupeRecords(rows){
+  const seen=new Map();
+  const statusPriority=(rec)=>{
+    const hasProof=!!(rec.popStoragePath || rec.popFileName || rec.popUploadedDate || rec.paymentSubmittedDate);
+    if(rec.paymentStatus==='approved') return 3;
+    if(rec.paymentStatus==='pending' || hasProof) return 2;
+    return 1;
+  };
+  (rows||[]).forEach(raw=>{
+    const rec=normaliseRecordFromDb(raw);
+    const key=String(rec.id||'');
+    const existing=seen.get(key);
+    const recStatus=statusPriority(rec);
+    const existingStatus=existing ? statusPriority(existing) : -1;
+    const recTime=new Date(rec.updatedAt || rec.createdAt || rec.date || 0).getTime() || 0;
+    const existingTime=existing ? (new Date(existing.updatedAt || existing.createdAt || existing.date || 0).getTime() || 0) : -1;
+    if(!existing || recStatus>existingStatus || (recStatus===existingStatus && recTime>=existingTime)){
+      seen.set(key, rec);
+    }
+  });
+  return Array.from(seen.values()).sort((a,b)=>new Date(b.updatedAt||b.createdAt||b.date||0)-new Date(a.updatedAt||a.createdAt||a.date||0));
+}
+
+async function loadRecordsFromCloud(){
+  if(!supabaseReady) return recordsCache;
+  const {data,error}=await supabaseClient.from(SUPABASE_CONFIG.ASSESSMENTS_TABLE).select('*').order('created_at',{ascending:false});
+  if(error) throw error;
+  recordsCache=dedupeRecords(data||[]);
+  return recordsCache;
+}
+function normaliseRecordFromDb(r){
+  return {
+    id:r.id,
+    firstName:r.first_name || r.firstName || '',
+    lastName:r.last_name || r.lastName || '',
+    name:r.learner_name || r.name || `${r.first_name||''} ${r.last_name||''}`.trim(),
+    school:r.school || '',
+    role:r.role || '',
+    profileName:r.profile_name || r.profileName || 'Visual Learner',
+    dominant:Array.isArray(r.dominant) ? r.dominant : ['V'],
+    scores:{V:Number(r.score_v ?? r?.scores?.V ?? 0),A:Number(r.score_a ?? r?.scores?.A ?? 0),R:Number(r.score_r ?? r?.scores?.R ?? 0),K:Number(r.score_k ?? r?.scores?.K ?? 0)},
+    duration:Number(r.duration_minutes ?? r.duration ?? 0),
+    date:r.assessment_date || r.date || r.created_at || new Date().toISOString(),
+    answers:r.answers || {},
+    payRef:r.pay_ref || r.payRef || '',
+    accessToken:r.access_token || r.accessToken || '',
+    paymentStatus:r.payment_status || r.paymentStatus || 'unpaid',
+    popStoragePath:r.proof_file_path || r.popStoragePath || '',
+    popFileName:r.pop_file_name || r.popFileName || '',
+    popUploadedDate:r.proof_uploaded_at || r.popUploadedDate || r.popUploadedAt || '',
+    paymentSubmittedDate:r.payment_submitted_at || r.paymentSubmittedDate || '',
+    approvedDate:r.approved_at || r.approvedDate || '',
+    ipAddress:r.ip_address || r.ipAddress || '',
+    deviceFingerprint:r.device_fingerprint || r.deviceFingerprint || '',
+    deviceInfo:{
+      userAgent:r.user_agent || r?.deviceInfo?.userAgent || '',
+      language:r.browser_language || r?.deviceInfo?.language || '',
+      platform:r.platform || r?.deviceInfo?.platform || '',
+      screen:r.screen_size || r?.deviceInfo?.screen || '',
+      timeZone:r.timezone || r?.deviceInfo?.timeZone || ''
+    },
+    createdAt:r.created_at || null,
+    updatedAt:r.updated_at || null
+  };
+}
+function recordToDbPayload(r){
+  return {
+    id:r.id,
+    first_name:r.firstName || '',
+    last_name:r.lastName || '',
+    learner_name:r.name || `${r.firstName||''} ${r.lastName||''}`.trim(),
+    school:r.school || '',
+    role:r.role || '',
+    profile_name:r.profileName || '',
+    dominant:Array.isArray(r.dominant) ? r.dominant : [],
+    score_v:Number(r?.scores?.V ?? 0),
+    score_a:Number(r?.scores?.A ?? 0),
+    score_r:Number(r?.scores?.R ?? 0),
+    score_k:Number(r?.scores?.K ?? 0),
+    duration_minutes:Number(r.duration ?? 0),
+    assessment_date:r.date || new Date().toISOString(),
+    answers:r.answers || {},
+    pay_ref:r.payRef || '',
+    access_token:r.accessToken || null,
+    payment_status:r.paymentStatus || 'unpaid',
+    proof_file_path:r.popStoragePath || null,
+    proof_uploaded_at:r.popUploadedDate || null,
+    pop_file_name:r.popFileName || null,
+    payment_submitted_at:r.paymentSubmittedDate || null,
+    approved_at:r.approvedDate || null,
+    device_fingerprint:r.deviceFingerprint || null,
+    user_agent:r?.deviceInfo?.userAgent || null,
+    browser_language:r?.deviceInfo?.language || null,
+    platform:r?.deviceInfo?.platform || null,
+    screen_size:r?.deviceInfo?.screen || null,
+    timezone:r?.deviceInfo?.timeZone || null,
+    ip_address:r.ipAddress || null
+  };
+}
+function patchToDbPayload(patch){
+  const out={};
+  if('firstName' in patch) out.first_name=patch.firstName;
+  if('lastName' in patch) out.last_name=patch.lastName;
+  if('name' in patch) out.learner_name=patch.name;
+  if('school' in patch) out.school=patch.school;
+  if('role' in patch) out.role=patch.role;
+  if('profileName' in patch) out.profile_name=patch.profileName;
+  if('dominant' in patch) out.dominant=patch.dominant;
+  if('scores' in patch){ out.score_v=Number(patch?.scores?.V ?? 0); out.score_a=Number(patch?.scores?.A ?? 0); out.score_r=Number(patch?.scores?.R ?? 0); out.score_k=Number(patch?.scores?.K ?? 0); }
+  if('duration' in patch) out.duration_minutes=Number(patch.duration ?? 0);
+  if('date' in patch) out.assessment_date=patch.date;
+  if('answers' in patch) out.answers=patch.answers;
+  if('payRef' in patch) out.pay_ref=patch.payRef;
+  if('accessToken' in patch) out.access_token=patch.accessToken;
+  if('paymentStatus' in patch) out.payment_status=patch.paymentStatus;
+  if('popStoragePath' in patch) out.proof_file_path=patch.popStoragePath;
+  if('popUploadedDate' in patch) out.proof_uploaded_at=patch.popUploadedDate;
+  if('popFileName' in patch) out.pop_file_name=patch.popFileName;
+  if('paymentSubmittedDate' in patch) out.payment_submitted_at=patch.paymentSubmittedDate;
+  if('approvedDate' in patch) out.approved_at=patch.approvedDate;
+  if('deviceFingerprint' in patch) out.device_fingerprint=patch.deviceFingerprint;
+  if('ipAddress' in patch) out.ip_address=patch.ipAddress;
+  if('deviceInfo' in patch){
+    if('userAgent' in patch.deviceInfo) out.user_agent=patch.deviceInfo.userAgent;
+    if('language' in patch.deviceInfo) out.browser_language=patch.deviceInfo.language;
+    if('platform' in patch.deviceInfo) out.platform=patch.deviceInfo.platform;
+    if('screen' in patch.deviceInfo) out.screen_size=patch.deviceInfo.screen;
+    if('timeZone' in patch.deviceInfo) out.timezone=patch.deviceInfo.timeZone;
+  }
+  return out;
+}
+function getRecords(){ return Array.isArray(recordsCache)?recordsCache:[]; }
+
+async function ensurePractitionerSession(){
+  if(!supabaseReady) throw new Error('Supabase is not configured yet.');
+  const {data:{session},error}=await supabaseClient.auth.getSession();
+  if(error) throw error;
+  if(!isPractitionerSession(session)){
+    throw new Error('Practitioner login required for this action.');
+  }
+  currentPortalSession=session;
+  return session;
+}
+
+async function fetchRecordById(id){
+  const localRecord=getRecords().find(r=>String(r.id)===String(id));
+  if(localRecord) return localRecord;
+  if(!supabaseReady) return null;
+  const {data:{session},error}=await supabaseClient.auth.getSession();
+  if(error) throw error;
+  if(!isPractitionerSession(session)) return null;
+  const {data,rowError}=await supabaseClient
+    .from(SUPABASE_CONFIG.ASSESSMENTS_TABLE)
+    .select('*')
+    .eq('id', id)
+    .order('updated_at',{ascending:false})
+    .limit(1);
+  if(rowError) throw rowError;
+  return data && data.length ? normaliseRecordFromDb(data[0]) : null;
+}
+
+
+async function refreshPortalData(){
+  try{
+    await loadRecordsFromCloud();
+    renderPortalDashboard();
+    notify('Dashboard refreshed from Supabase.', 'success');
+  }catch(e){
+    console.error(e);
+    notify('Could not refresh dashboard data from Supabase.', 'error');
+  }
+}
+async function saveRecord(r){
+  if(!supabaseReady){
+    recordsCache.unshift(r);
+    localStorage.setItem('learnstyle_last_record_backup', JSON.stringify(r));
+    return r;
+  }
+  if(!hasEdgeFunctionConfig()) throw new Error('Edge Function URLs are missing.');
+  return await submitAssessmentViaEdge(r);
+}
+
+async function updateRecord(id, patch, options={}){
+  if(!supabaseReady) throw new Error('Supabase is not configured yet.');
+  const dbPatch=patchToDbPayload(patch);
+  let query=supabaseClient.from(SUPABASE_CONFIG.ASSESSMENTS_TABLE).update(dbPatch).eq('id', id);
+
+  let token='';
+  if(options.requirePractitioner){
+    await ensurePractitionerSession();
+  }else{
+    token=getRecordAccessToken(id);
+    if(!token) throw new Error('This browser is not authorised to update that learner record.');
+    query=query.eq('access_token', token);
+  }
+
+  const {error}=await query;
+  if(error){
+    console.error('UPDATE PATCH:', dbPatch);
+    console.error('UPDATE ERROR RAW:', error);
+    throw new Error(error.message || error.details || error.hint || JSON.stringify(error));
+  }
+
+  const existing=getRecords().find(r=>String(r.id)===String(id) && (!token || !r.accessToken || r.accessToken===token)) ||
+                 getRecords().find(r=>String(r.id)===String(id)) ||
+                 {id, accessToken: token};
+
+  const updated={...existing, ...patch, id: existing.id || id};
+  if(token && !updated.accessToken) updated.accessToken=token;
+
+  const idx=recordsCache.findIndex(r=>String(r.id)===String(id) && (!token || !r.accessToken || r.accessToken===token));
+  if(idx>-1) recordsCache[idx]=updated; else recordsCache.unshift(updated);
+  localStorage.setItem('learnstyle_last_record_backup', JSON.stringify(updated));
+  if(updated.id && updated.accessToken){ storeRecordAccessToken(updated.id, updated.accessToken); }
+  return updated;
+}
+async function deleteRecord(id){
+  if(!confirm('Delete this assessment?')) return;
+  try{
+    if(supabaseReady){
+      await ensurePractitionerSession();
+      const record=getRecords().find(r=>r.id===id);
+      if(record && record.popStoragePath){
+        await supabaseClient.storage.from(SUPABASE_CONFIG.STORAGE_BUCKET).remove([record.popStoragePath]);
+      }
+      const {error}=await supabaseClient.from(SUPABASE_CONFIG.ASSESSMENTS_TABLE).delete().eq('id',id);
+      if(error) throw error;
+    }
+    recordsCache=getRecords().filter(r=>r.id!==id);
+    clearRecordAccessToken(id);
+    renderPortalDashboard();
+    notify('Assessment deleted.', 'success');
+  }catch(e){
+    console.error(e);
+    notify('Could not delete the assessment.', 'error');
+  }
+}
+async function clearAllData(){
+  notify('Bulk delete is disabled in the shared cloud version to protect your data. Delete records individually in the dashboard if needed.', 'info');
+}
+
+// ═══════════════════════════════════════════════════════
+// PORTAL
+// ═══════════════════════════════════════════════════════
+async function initPortal(){
+  if(!supabaseReady){
+    document.getElementById('portal-login-view').style.display='block';
+    document.getElementById('portal-dashboard').style.display='none';
+    setLoginError('Add your Supabase URL and anon key first, then reload the page.');
+    return;
+  }
+  try{
+    const {data:{session}}=await supabaseClient.auth.getSession();
+    currentPortalSession=session;
+    portalAuthenticated=!!session;
+    if(portalAuthenticated){
+      document.getElementById('portal-login-view').style.display='none';
+      document.getElementById('portal-dashboard').style.display='block';
+      await loadRecordsFromCloud();
+      renderPortalDashboard();
+    }else{
+      document.getElementById('portal-login-view').style.display='block';
+      document.getElementById('portal-dashboard').style.display='none';
+    }
+  }catch(e){
+    console.error('SESSION CHECK ERROR:', e);
+    const msg = e?.message || e?.details || e?.hint || 'Confirm your project settings.';
+    setLoginError('Supabase session check failed. '+msg);
+  }
+}
+async function portalLogin(){
+  if(!supabaseReady){
+    setLoginError('Add your Supabase URL and anon key first.');
+    return;
+  }
+  const email=document.getElementById('portal-email').value.trim();
+  const password=document.getElementById('portal-password').value;
+  if(!email || !password){
+    setLoginError('Enter your practitioner email and password.');
+    return;
+  }
+  try{
+    const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
+    if(error) throw error;
+    currentPortalSession=data.session || null;
+    portalAuthenticated=true;
+    setLoginError('');
+    document.getElementById('portal-login-view').style.display='none';
+    document.getElementById('portal-dashboard').style.display='block';
+    await loadRecordsFromCloud();
+    renderPortalDashboard();
+  }catch(e){
+    console.error('LOGIN ERROR:', e);
+    const msg = e?.message || e?.details || e?.hint || 'Check the practitioner user in Supabase Auth.';
+    setLoginError('Unable to sign in. '+msg);
+  }
+}
+async function portalLogout(){
+  portalAuthenticated=false;
+  currentPortalSession=null;
+  document.getElementById('portal-password').value='';
+  document.getElementById('portal-login-view').style.display='block';
+  document.getElementById('portal-dashboard').style.display='none';
+  if(supabaseReady){ await supabaseClient.auth.signOut(); }
+}
+
+async function viewProof(id){
+  try{
+    const record=getRecords().find(r=>r.id===id);
+    if(!record || !record.popStoragePath){
+      notify('No proof of payment file is attached to this record.', 'info');
+      return;
+    }
+    if(!supabaseReady){
+      notify('Supabase is not connected.', 'error');
+      return;
+    }
+    const {data,error}=await supabaseClient.storage.from(SUPABASE_CONFIG.STORAGE_BUCKET).createSignedUrl(record.popStoragePath, 300);
+    if(error) throw error;
+    window.open(data.signedUrl, '_blank', 'noopener');
+  }catch(e){
+    console.error(e);
+    notify('Could not open the proof of payment file. Check your storage bucket permissions.', 'error');
+  }
+}
+
+async function approvePayment(id){
+  try{
+    await updateRecord(id,{paymentStatus:'approved', approvedDate:new Date().toISOString()},{requirePractitioner:true});
+    try{ await loadRecordsFromCloud(); }catch(e){}
+    renderPortalDashboard();
+    alert("Payment approved. The learner detailed report is now unlocked.");
+  }catch(e){
+    console.error(e);
+    notify('Could not approve payment.', 'error');
+  }
+}
+
+function renderPortalDashboard(){
+  const records=getRecords();
+
+  const classifyStatus=(r)=>{
+    const hasProof=!!(r.popStoragePath || r.popFileName || r.popUploadedDate || r.popUploadedAt || r.paymentSubmittedDate);
+    if(r.paymentStatus==='approved') return 'approved';
+    if(r.paymentStatus==='pending' || hasProof) return 'pending';
+    return 'unpaid';
+  };
+
+  const now=new Date();
+  const thisMonth=records.filter(r=>{
+    const d=new Date(r.date);
+    return d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear();
+  }).length;
+
+  const pendingCount=records.filter(r=>classifyStatus(r)==='pending').length;
+  const schoolCount=[...new Set(records.map(r=>(typeof r.school==='string'?r.school.trim():'')).filter(Boolean))].length;
+
+  document.getElementById('portal-stats').innerHTML=`
+    <div class="p-stat"><span class="num">${records.length}</span><span class="lbl">Assessments</span></div>
+    <div class="p-stat"><span class="num">${schoolCount}</span><span class="lbl">Schools</span></div>
+    <div class="p-stat"><span class="num" style="color:var(--amber)">${pendingCount}</span><span class="lbl">Pending payment</span></div>
+    <div class="p-stat"><span class="num">${thisMonth}</span><span class="lbl">This month</span></div>`;
+
+  if(!records.length){
+    document.getElementById('portal-list').innerHTML='<div class="empty-state"><h3>No assessments yet</h3><p>Completed assessments will appear here once Supabase is connected.</p></div>';
+    return;
+  }
+
+  const priority={pending:0, unpaid:1, approved:2};
+  const sorted=[...records].sort((a,b)=>{
+    const sa=classifyStatus(a), sb=classifyStatus(b);
+    if(priority[sa]!==priority[sb]) return priority[sa]-priority[sb];
+    return new Date(b.date)-new Date(a.date);
+  });
+
+  document.getElementById('portal-list').innerHTML=sorted.map(r=>{
+    const status=classifyStatus(r);
+    const date=new Date(r.date).toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'});
+    const dom=Array.isArray(r.dominant)&&r.dominant.length?r.dominant:['V'];
+    const badges=dom.map(d=>`<span class="mini-badge color-${d}">${escapeHtml(d)}</span>`).join('');
+    const payBadge=status==='approved'
+      ? `<span class="payment-paid-badge">Approved</span>`
+      : status==='pending'
+      ? `<span class="payment-pending-badge">Pending</span>`
+      : '';
+    const proofBtn=(r.popStoragePath || r.popFileName)
+      ? `<button class="icon-btn" onclick="event.stopPropagation();viewProof('${r.id}')">View POP</button>`
+      : '';
+    const approveBtn=status==='pending'
+      ? `<button class="icon-btn approve" onclick="event.stopPropagation();approvePayment('${r.id}')">Approve</button>`
+      : '';
+    const safeSchool=(typeof r.school==='string' && r.school!=='true' && r.school!=='false') ? r.school : '';
+    return `<div class="assessment-row" onclick="openDetail('${r.id}')">
+      <div>
+        <div class="row-name">${escapeHtml(r.name||'')} ${payBadge}</div>
+        <div class="row-meta">${escapeHtml(safeSchool)}${safeSchool?' · ':''}${date} · ${escapeHtml(r.role||'')} · ${r.duration||'?'} min${r.payRef?' · Ref: '+escapeHtml(r.payRef):''}</div>
+      </div>
+      <div class="row-badges">${badges}</div>
+      <div style="font-size:0.82rem;color:var(--muted);flex:1;text-align:right;min-width:100px;">${escapeHtml(r.profileName||'')}</div>
+      <div class="row-actions" onclick="event.stopPropagation()">
+        ${proofBtn}
+        ${approveBtn}
+        <button class="icon-btn" onclick="openDetail('${r.id}')">View</button>
+        <button class="icon-btn" onclick="openDetailForPDF('${r.id}')">PDF</button>
+        <button class="icon-btn delete" onclick="deleteRecord('${r.id}')">Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════════════════
+function openDetail(id){
+  const record=getRecords().find(r=>r.id===id);
+  if(!record) return;
+  currentModalRecord=record;
+  const{scores,dominant,profileName,name,date,duration,role,school,payRef,paymentStatus,ipAddress,deviceFingerprint,deviceInfo}=record;
+  const dom=dominant||['V'];
+  const maxScore=Object.values(scores).reduce((a,b)=>a+b,0);
+  const varkOrder=['V','A','R','K'];
+  const varkLong={V:'Visual',A:'Auditory',R:'Reading & Writing',K:'Kinaesthetic'};
+  const dateStr=new Date(date).toLocaleDateString('en-ZA',{day:'numeric',month:'long',year:'numeric'});
+  const bars=varkOrder.map(k=>{
+    const pct=maxScore>0?Math.round((scores[k]/maxScore)*100):0;
+    return `<div class="score-row" style="margin-bottom:0.8rem"><span class="score-label color-${k}-text" style="font-size:0.82rem">${varkLong[k]}</span><div class="score-track"><div class="score-fill color-${k}-bar" style="width:${pct}%"></div></div><span class="score-pct">${pct}%</span></div>`;
+  }).join('');
+  const allTips=[];dom.forEach(d=>profiles[d]&&profiles[d].tips.forEach(t=>allTips.push({...t,d})));
+  const studyHTML=dom.length===1?
+    `<div style="background:rgba(${profiles[dom[0]].color.join(',')},0.08);border-radius:12px;padding:1rem;margin-top:0.75rem"><div style="font-size:0.8rem;font-weight:700;color:${profiles[dom[0]].hex};margin-bottom:0.5rem">${profiles[dom[0]].name} Study Methods</div>${allTips.map(t=>`<div style="font-size:0.82rem;color:var(--muted);padding:0.25rem 0">${t.i} ${t.t}</div>`).join('')}</div>`:
+    `<div style="background:rgba(56,190,201,0.07);border-radius:12px;padding:1rem;margin-top:0.75rem"><div style="font-size:0.8rem;font-weight:700;color:#38BEC9;margin-bottom:0.5rem">Combined Study Methods</div>${allTips.map(t=>`<div style="font-size:0.82rem;color:var(--muted);padding:0.25rem 0">${t.i} ${t.t}</div>`).join('')}</div>`;
+
+  document.getElementById('modal-content').innerHTML=`
+    <div style="margin-bottom:1.25rem">
+      <h2 style="font-family:'Fraunces',serif;font-size:1.5rem;margin-bottom:0.2rem">${name||''}</h2>
+      <p style="color:var(--muted);font-size:0.82rem">${school||''} · ${dateStr} · ${role} · ${duration||'?'} min</p>
+      ${payRef?`<p style="color:var(--amber);font-size:0.78rem;margin-top:0.2rem">Ref: ${payRef} · Status: ${paymentStatus||'unpaid'}</p>`:''}
+      ${(ipAddress||deviceFingerprint)?`<p style="color:var(--muted);font-size:0.76rem;margin-top:0.3rem;line-height:1.5">${ipAddress?`IP: ${ipAddress}`:'IP unavailable'}${deviceFingerprint?` · Device ID: ${deviceFingerprint.slice(0,24)}…`:''}</p>`:''}
+      <div class="vark-badges" style="justify-content:flex-start;margin-top:0.75rem">${dom.map(d=>`<span class="vark-badge color-${d}">${profiles[d].emoji} ${profiles[d].name}</span>`).join('')}</div>
+    </div>
+    <div class="score-bars" style="padding:1.25rem">${bars}</div>${studyHTML}`;
+  document.getElementById('detail-modal').classList.add('open');
+}
+function openDetailForPDF(id){openDetail(id);setTimeout(generatePDF,400);}
+function closeModal(){document.getElementById('detail-modal').classList.remove('open');currentModalRecord=null;}
+document.getElementById('detail-modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+// ═══════════════════════════════════════════════════════
+// PRACTITIONER PDF (white, professional, fixed)
+// ═══════════════════════════════════════════════════════
+
+function generatePDF(){
+  if(!currentModalRecord){alert('Please open a record first.');return;}
+  const btn=document.getElementById('pdf-btn');
+  btn.textContent='Preparing PDF…';btn.disabled=true;
+  const done=()=>{btn.textContent='⬇ Download PDF Report';btn.disabled=false;};
+  if(window.jspdf&&window.jspdf.jsPDF){buildJsPDF(currentModalRecord,done);return;}
+  const s=document.createElement('script');
+  s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+  s.onload=()=>buildJsPDF(currentModalRecord,done);
+  s.onerror=()=>{done();fallbackPDF(currentModalRecord);};
+  document.head.appendChild(s);
+}
+
+function buildJsPDF(r,done){
+  try{
+    const JsPDF=window.jspdf.jsPDF;
+    const doc=new JsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const W=210,H=297,ML=16,MR=16,MT=16,MB=16,cW=W-ML-MR;
+    const dom=(r.dominant&&r.dominant.length)?r.dominant:['V'];
+    const fullName=r.name||(r.firstName+' '+(r.lastName||'')).trim()||'Learner';
+    const ds=new Date(r.date).toLocaleDateString('en-ZA',{day:'numeric',month:'long',year:'numeric'});
+    const maxScore=Math.max(1,...Object.values(r.scores||{V:0,A:0,R:0,K:0}));
+    const totalScore=Math.max(1,Object.values(r.scores||{V:0,A:0,R:0,K:0}).reduce((a,b)=>a+b,0));
+    const varkLong={V:'Visual',A:'Auditory',R:'Reading & Writing',K:'Kinaesthetic'};
+    const SOFT={sage:[178,201,186],blush:[237,225,220],sand:[244,239,233],stone:[221,214,206],taupe:[120,108,101],ink:[55,52,50],white:[255,255,255]};
+    const allTips = dom.flatMap(d => (profiles[d]?.tips || []).map(t=>({style:profiles[d].name, tip:t.t})));
+    const sessions = {
+      V:{warm:'Sketch a mini mind map of the topic and scan headings or diagrams.',block1:'Convert notes into flowcharts, diagrams, symbols, and colour blocks.',break:'Stand up, stretch, and visualise the concept from memory.',block2:'Create visual flashcards, timelines, or comparison tables.',review:'Redraw the key ideas without looking at the notes.',wrap:'Highlight what is still unclear and mark the next visual task.'},
+      A:{warm:'Say what you already know out loud and preview the topic verbally.',block1:'Read notes aloud, record key ideas, or explain the work to someone.',break:'Take a short walk and repeat the main points verbally.',block2:'Listen to your recording and refine it into a spoken summary.',review:'Recite the 5 most important facts without looking.',wrap:'Record a 1-minute voice note on what still needs revision.'},
+      R:{warm:'Read headings and key terms, then write a short session goal.',block1:'Read the content carefully and annotate or underline key points.',break:'Step away briefly, then return and write 3 points you remember.',block2:'Rewrite notes into a clean summary, list, or paragraph.',review:'Write the top 5 takeaways from memory.',wrap:'List follow-up questions and next written tasks.'},
+      K:{warm:'Handle cards, examples, or objects and sort what you know already.',block1:'Use practice questions, demonstrations, movement, or model-building.',break:'Walk, stretch, and link a movement to each key concept.',block2:'Apply the work using examples, role-play, or teach-back practice.',review:'Complete a quick hands-on recall task or timed mini-quiz.',wrap:'Note what needs more practice and plan the next active task.'}
+    };
+    const rows=[['0-5 min','Warm-up'],['5-20 min','Active Learning Block 1'],['20-25 min','Break & Reset'],['25-38 min','Active Learning Block 2'],['38-42 min','Review & Recall'],['42-45 min','Wrap-up']];
+    function sessionText(styleKey,rowIndex){
+      const s=sessions[styleKey];
+      return [s.warm,s.block1,s.break,s.block2,s.review,s.wrap][rowIndex];
+    }
+    function pageBg(){
+      doc.setFillColor(...SOFT.white); doc.rect(0,0,W,H,'F');
+      doc.setDrawColor(...SOFT.stone); doc.setLineWidth(0.2); doc.line(ML,H-MB+2,W-MR,H-MB+2);
+      doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...SOFT.taupe);
+      doc.text('Verity Psych Consultancy', ML, H-8);
+      doc.text(String(doc.getNumberOfPages()), W-MR, H-8, {align:'right'});
+    }
+    function newPage(){ doc.addPage(); pageBg(); return MT; }
+    function ensureSpace(y, needed){ if(y+needed>H-MB-6) y=newPage(); return y; }
+    function sectionTitle(y,title,sub){
+      y=ensureSpace(y,18);
+      doc.setFillColor(...SOFT.sand); doc.roundedRect(ML,y,cW,12,3,3,'F');
+      doc.setFont('helvetica','bold'); doc.setFontSize(14); doc.setTextColor(...SOFT.ink);
+      doc.text(title, ML+5, y+8);
+      if(sub){
+        doc.setFont('helvetica','normal'); doc.setFontSize(8.6); doc.setTextColor(...SOFT.taupe);
+        doc.text(sub, W-MR, y+8, {align:'right'});
+      }
+      return y+16;
+    }
+    function para(y,text,size,color,leading){
+      doc.setFont('helvetica','normal'); doc.setFontSize(size||10.2); doc.setTextColor(...(color||SOFT.ink));
+      const lines=doc.splitTextToSize(String(text), cW);
+      y=ensureSpace(y, lines.length*(leading||5)+2);
+      doc.text(lines, ML, y);
+      return y + lines.length*(leading||5) + 2;
+    }
+    function labelValue(y,label,value){
+      y=ensureSpace(y,10);
+      doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(...SOFT.taupe);
+      doc.text(label, ML, y);
+      doc.setFont('helvetica','normal'); doc.setTextColor(...SOFT.ink);
+      doc.text(String(value||'—'), ML+30, y);
+      return y+7;
+    }
+
+    pageBg();
+    doc.setFillColor(...SOFT.blush); doc.rect(0,0,W,72,'F');
+    doc.setFillColor(...SOFT.sage); doc.rect(0,0,W,6,'F');
+    doc.setFont('times','bold'); doc.setFontSize(26); doc.setTextColor(...SOFT.ink);
+    doc.text('Learning Style Assessment Report', W/2, 38, {align:'center'});
+    doc.setFont('helvetica','normal'); doc.setFontSize(11); doc.setTextColor(...SOFT.taupe);
+    doc.text('Professional educational guidance report', W/2, 46, {align:'center'});
+    doc.setDrawColor(...SOFT.stone); doc.line(48,52,162,52);
+    let y=86;
+    y=labelValue(y,'Learner',fullName);
+    y=labelValue(y,'School',r.school||'—');
+    y=labelValue(y,'Date',ds);
+    y=labelValue(y,'Role',r.role||'Learner');
+    y=labelValue(y,'Profile',r.profileName||buildProfileName(dom));
+    y+=6;
+    doc.setFillColor(...SOFT.sand); doc.roundedRect(ML,y,cW,34,4,4,'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(...SOFT.ink);
+    doc.text('Report Overview', ML+5, y+8);
+    doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(...SOFT.taupe);
+    const ov=doc.splitTextToSize('This report summarises the learner’s VARK learning-style preferences and provides practical educational strategies that can support more effective studying and engagement. It is designed for practitioner feedback and parent or educator guidance.', cW-10);
+    doc.text(ov, ML+5, y+15);
+    y+=46;
+    doc.setDrawColor(...SOFT.stone); doc.line(ML,y,W-MR,y);
+    y+=10;
+    doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(...SOFT.ink);
+    doc.text('Signed by', ML, y);
+    doc.setFont('times','italic'); doc.setFontSize(16); doc.setTextColor(...SOFT.ink);
+    doc.text('Gizelle Simpson', ML, y+10);
+    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(...SOFT.taupe);
+    doc.text('Registered Psychometrist · Verity Psych Consultancy', ML, y+16);
+
+    y=newPage();
+    y=sectionTitle(y,'Profile Summary', r.profileName||buildProfileName(dom));
+    const summary=dom.map(d=>profiles[d]?.practDesc||profiles[d]?.desc||'').join(' ');
+    y=para(y,summary,10.2,SOFT.ink,5);
+    y+=2;
+    y=sectionTitle(y,'VARK Score Overview');
+    const scoreTop=y;
+    const leftX=ML;
+    const barX=ML+48;
+    const barW=cW-62;
+    ['V','A','R','K'].forEach((k,idx)=>{
+      const rowY=scoreTop+idx*18;
+      doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(...SOFT.ink);
+      doc.text(varkLong[k], leftX, rowY+6);
+      doc.setFillColor(...SOFT.sand); doc.roundedRect(barX,rowY,barW,7,2,2,'F');
+      const fillW=Math.max(8,(Number(r.scores[k]||0)/maxScore)*barW);
+      doc.setFillColor(...(profiles[k]?.color||SOFT.sage)); doc.roundedRect(barX,rowY,fillW,7,2,2,'F');
+      doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...SOFT.taupe);
+      doc.text(`${Math.round((Number(r.scores[k]||0)/totalScore)*100)}%`, W-MR, rowY+5.8, {align:'right'});
+    });
+    y=scoreTop+75;
+    y=sectionTitle(y,'Targeted Study Strategies');
+    const tips=allTips.length?allTips:dom.map(d=>({style:profiles[d].name,tip:(profiles[d].tips&&profiles[d].tips[0]&&profiles[d].tips[0].t)||''}));
+    tips.forEach(t=>{
+      const lines=doc.splitTextToSize(`${t.style}: ${t.tip}`, cW-8);
+      const h=lines.length*4.8+6;
+      y=ensureSpace(y,h);
+      doc.setFillColor(...SOFT.white); doc.setDrawColor(...SOFT.stone);
+      doc.roundedRect(ML,y,cW,h,2,2,'FD');
+      doc.setFont('helvetica','normal'); doc.setFontSize(9.4); doc.setTextColor(...SOFT.ink);
+      doc.text(lines, ML+4, y+6);
+      y+=h+3;
+    });
+
+    y=newPage();
+    y=sectionTitle(y,'45-Minute Study Session Plan','Tailored per dominant learning style');
+    const styles=dom.slice(0,3);
+    const firstCol=22, secondCol=28;
+    const remaining=cW-firstCol-secondCol;
+    const styleCol=remaining/styles.length;
+    const headerH=10;
+    let rowY=y;
+    doc.setFillColor(...SOFT.sage); 
+    doc.rect(ML,rowY,firstCol,headerH,'F');
+    doc.rect(ML+firstCol,rowY,secondCol,headerH,'F');
+    styles.forEach((s,i)=>doc.rect(ML+firstCol+secondCol+i*styleCol,rowY,styleCol,headerH,'F'));
+    doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(255,255,255);
+    doc.text('Time', ML+firstCol/2, rowY+6.5, {align:'center'});
+    doc.text('Block', ML+firstCol+secondCol/2, rowY+6.5, {align:'center'});
+    styles.forEach((s,i)=>doc.text(shortNames[s], ML+firstCol+secondCol+i*styleCol+styleCol/2, rowY+6.5, {align:'center'}));
+    rowY+=headerH;
+    rows.forEach((row,ridx)=>{
+      const cellTexts=[row[0],row[1]].concat(styles.map(s=>sessionText(s,ridx)));
+      const widths=[firstCol,secondCol].concat(styles.map(()=>styleCol));
+      let maxLines=1;
+      const wrapped=[];
+      for(let i=0;i<cellTexts.length;i++){
+        const lines=doc.splitTextToSize(cellTexts[i], widths[i]-4);
+        wrapped.push(lines);
+        if(lines.length>maxLines) maxLines=lines.length;
+      }
+      const rh=Math.max(12,maxLines*4.2+4);
+      if(rowY+rh>H-MB-18){
+        rowY=newPage();
+        rowY=sectionTitle(rowY,'45-Minute Study Session Plan','continued');
+      }
+      let x=ML;
+      for(let i=0;i<widths.length;i++){
+        doc.setFillColor(i<2?244:255,i<2?239:255,i<2?233:255);
+        doc.setDrawColor(...SOFT.stone);
+        doc.rect(x,rowY,widths[i],rh,'FD');
+        doc.setFont('helvetica',i<2?'bold':'normal'); doc.setFontSize(7.8); doc.setTextColor(...SOFT.ink);
+        doc.text(wrapped[i], x+2, rowY+5);
+        x+=widths[i];
+      }
+      rowY+=rh;
+    });
+    y=rowY+8;
+    y=sectionTitle(y,'Professional Disclaimer');
+    const disclaimer='This report is intended for educational guidance within the scope of psychometrist independent practice. It reflects learning preferences rather than cognitive ability, diagnosis, or clinical findings, and should be interpreted as supportive educational information only.';
+    y=para(y,disclaimer,8.8,SOFT.taupe,4.5);
+    y+=4;
+    doc.setDrawColor(...SOFT.stone); doc.line(ML,y,W-MR,y);
+    y+=10;
+    doc.setFont('helvetica','normal'); doc.setFontSize(9.5); doc.setTextColor(...SOFT.ink);
+    doc.text('Signature', ML, y);
+    doc.line(ML, y+8, ML+65, y+8);
+    doc.setFont('times','italic'); doc.setFontSize(13);
+    doc.text('Gizelle Simpson', ML, y+16);
+
+    const fn='learnstyle-'+fullName.replace(/\s+/g,'-').toLowerCase()+'-'+new Date(r.date).toISOString().slice(0,10)+'.pdf';
+    doc.save(fn);
+    if(done) done();
+  }catch(e){
+    console.error('PDF error:',e);
+    if(done) done();
+    fallbackPDF(r);
+  }
+}
+
+function fallbackPDF(r){
+  const dom=(r.dominant&&r.dominant.length)?r.dominant:['V'];
+  const fullName=r.name||(r.firstName+' '+(r.lastName||'')).trim()||'Learner';
+  const ds=new Date(r.date).toLocaleDateString('en-ZA',{day:'numeric',month:'long',year:'numeric'});
+  const rows=[['0-5 min','Warm-up'],['5-20 min','Active Learning Block 1'],['20-25 min','Break & Reset'],['25-38 min','Active Learning Block 2'],['38-42 min','Review & Recall'],['42-45 min','Wrap-up']];
+  const sessions={
+    V:['Sketch a mini mind map of the topic and scan headings or diagrams.','Convert notes into flowcharts, diagrams, symbols, and colour blocks.','Stand up, stretch, and visualise the concept from memory.','Create visual flashcards, timelines, or comparison tables.','Redraw the key ideas without looking at the notes.','Highlight what is still unclear and mark the next visual task.'],
+    A:['Say what you already know out loud and preview the topic verbally.','Read notes aloud, record key ideas, or explain the work to someone.','Take a short walk and repeat the main points verbally.','Listen to your recording and refine it into a spoken summary.','Recite the 5 most important facts without looking.','Record a 1-minute voice note on what still needs revision.'],
+    R:['Read headings and key terms, then write a short session goal.','Read the content carefully and annotate or underline key points.','Step away briefly, then return and write 3 points you remember.','Rewrite notes into a clean summary, list, or paragraph.','Write the top 5 takeaways from memory.','List follow-up questions and next written tasks.'],
+    K:['Handle cards, examples, or objects and sort what you know already.','Use practice questions, demonstrations, movement, or model-building.','Walk, stretch, and link a movement to each key concept.','Apply the work using examples, role-play, or teach-back practice.','Complete a quick hands-on recall task or timed mini-quiz.','Note what needs more practice and plan the next active task.']
+  };
+  const win=window.open('','_blank');
+  if(!win){alert('Please allow popups to generate PDF.');return;}
+  win.document.write(`<!DOCTYPE html><html><head><title>LearnStyle Report – ${fullName}</title>
+  <style>
+  body{font-family:Arial,sans-serif;max-width:900px;margin:0 auto;color:#373432;line-height:1.6;background:#fff}
+  .cover{background:#ede1dc;padding:70px 50px 55px;text-align:center;border-bottom:8px solid #b2c9ba}
+  .cover h1{font-family:Georgia,serif;font-size:34px;margin:0 0 10px}
+  .cover p{color:#786c65;font-size:15px}
+  .wrap{padding:34px 40px}
+  h2{font-size:20px;margin:28px 0 10px;color:#373432}
+  table{width:100%;border-collapse:collapse;margin:14px 0 24px}
+  th{background:#b2c9ba;color:white;padding:10px;border:1px solid #d9d2cb;font-size:12px;text-align:left}
+  td{padding:10px;border:1px solid #e3ddd7;font-size:12px;vertical-align:top}
+  .muted{color:#786c65}
+  .sig{margin-top:28px}
+  .line{border-top:1px solid #999;width:240px;margin-top:18px}
+  .disc{margin-top:24px;padding:14px;background:#f4efe9;border:1px solid #ddd2c8;font-size:12px;color:#786c65}
+  button{background:#b2c9ba;color:white;border:none;padding:12px 24px;border-radius:8px;cursor:pointer}
+  @media print{button{display:none}.wrap{padding:20px}}
+  </style></head><body>
+  <div class="cover"><h1>Learning Style Assessment Report</h1><p>Professional educational guidance report</p></div>
+  <div class="wrap">
+    <p><strong>Learner:</strong> ${fullName}<br><strong>School:</strong> ${r.school||'—'}<br><strong>Date:</strong> ${ds}<br><strong>Profile:</strong> ${r.profileName||buildProfileName(dom)}</p>
+    <h2>45-Minute Study Session Plan</h2>
+    <table><thead><tr><th>Time</th><th>Block</th>${dom.map(d=>`<th>${shortNames[d]}</th>`).join('')}</tr></thead><tbody>
+      ${rows.map((row,i)=>`<tr><td>${row[0]}</td><td>${row[1]}</td>${dom.map(d=>`<td>${sessions[d][i]}</td>`).join('')}</tr>`).join('')}
+    </tbody></table>
+    <div class="disc"><strong>Psychometric Disclaimer:</strong> This report is intended for educational guidance within the scope of psychometrist independent practice. It reflects learning preferences rather than cognitive ability, diagnosis, or clinical findings, and should be interpreted as supportive educational information only.</div>
+    <div class="sig"><p>Signature</p><div class="line"></div><p><em>Gizelle Simpson</em><br><span class="muted">Registered Psychometrist · Verity Psych Consultancy</span></p></div>
+    <br><button onclick="window.print()">Print / Save as PDF</button>
+  </div></body></html>`);
+  win.document.close();
+}
+</script>
+</body>
+</html>
